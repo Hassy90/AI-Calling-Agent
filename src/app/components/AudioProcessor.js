@@ -105,7 +105,7 @@ export const useAudioProcessor = ({
             const audioContext = await initializeAudioContext();
             chunksReceivedRef.current++;
 
-            console.log(`🎵 Processing audio chunk ${chunksReceivedRef.current}, length: ${base64Audio.length}`);
+            // console.log(`🎵 Processing audio chunk ${chunksReceivedRef.current}, length: ${base64Audio.length}`);
 
             // Convert base64 to raw audio data
             const uLawData = base64ToUint8Array(base64Audio);

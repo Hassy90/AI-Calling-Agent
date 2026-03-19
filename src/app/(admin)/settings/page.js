@@ -460,14 +460,14 @@ export default function SettingsCompliancePage() {
     setIsLoadingVoice(true);
     try {
       const response = await getClonedVoice();
-      console.log('Fetched voice response:', response);
+      // console.log('Fetched voice response:', response);
       if (response) {
         // Response is already in the correct format from getClonedVoice
         setCurrentVoice(response);
-        console.log('Set current voice:', response);
+        // console.log('Set current voice:', response);
       } else {
         setCurrentVoice(null);
-        console.log('No voice data, set to null');
+        // console.log('No voice data, set to null');
       }
     } catch (error) {
       console.error('Error fetching cloned voice:', error);

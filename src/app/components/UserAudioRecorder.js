@@ -28,7 +28,7 @@ export const useUserAudioRecorder = ({ onAudioSend, onError }) => {
                 throw new Error('MediaRecorder API not supported in this browser');
             }
 
-            console.log('🎤 Starting audio recording...');
+            // console.log('🎤 Starting audio recording...');
             
             // Request microphone access
             const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -56,7 +56,7 @@ export const useUserAudioRecorder = ({ onAudioSend, onError }) => {
             };
 
             mediaRecorderRef.current.onstop = () => {
-                console.log('🎤 Recording stopped, processing audio...');
+                // console.log('🎤 Recording stopped, processing audio...');
                 
                 const blob = new Blob(audioChunksRef.current, { 
                     type: 'audio/webm; codecs=opus' 
@@ -68,7 +68,7 @@ export const useUserAudioRecorder = ({ onAudioSend, onError }) => {
                     const byteArray = new Uint8Array(arrayBuffer);
                     const base64Audio = arrayBufferToBase64(byteArray);
                     
-                    console.log(`🎤 Sending audio data, size: ${base64Audio.length}`);
+                    // console.log(`🎤 Sending audio data, size: ${base64Audio.length}`);
                     onAudioSend?.(base64Audio);
                 };
                 reader.readAsArrayBuffer(blob);
@@ -89,7 +89,7 @@ export const useUserAudioRecorder = ({ onAudioSend, onError }) => {
             // Start recording
             mediaRecorderRef.current.start();
             setIsRecording(true);
-            console.log('🎤 Recording started successfully');
+            // console.log('🎤 Recording started successfully');
 
         } catch (error) {
             console.error('🎤 Error starting recording:', error);
@@ -101,7 +101,7 @@ export const useUserAudioRecorder = ({ onAudioSend, onError }) => {
     // Stop recording
     const stopRecording = useCallback(() => {
         if (mediaRecorderRef.current && isRecording) {
-            console.log('🎤 Stopping recording...');
+            // console.log('🎤 Stopping recording...');
             mediaRecorderRef.current.stop();
             setIsRecording(false);
         }

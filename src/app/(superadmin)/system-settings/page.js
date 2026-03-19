@@ -45,7 +45,7 @@ const mockApi = {
   saveGlobalConsentPolicy: async (data) => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        console.log('Saving global consent policy:', data);
+        // console.log('Saving global consent policy:', data);
         resolve({ status: 'success', message: 'Global consent policy updated' });
       }, 800);
     });
@@ -54,7 +54,7 @@ const mockApi = {
   saveSystemDefaults: async (data) => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        console.log('Saving system defaults:', data);
+        // console.log('Saving system defaults:', data);
         resolve({ status: 'success', message: 'System defaults updated' });
       }, 800);
     });
@@ -63,7 +63,7 @@ const mockApi = {
   saveComplianceRules: async (data) => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        console.log('Saving compliance rules:', data);
+        // console.log('Saving compliance rules:', data);
         resolve({ status: 'success', message: 'Compliance rules updated' });
       }, 800);
     });
