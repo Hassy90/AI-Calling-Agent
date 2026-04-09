@@ -8,6 +8,9 @@ import Testimonials from './LandingPage/Testimonal';
 import ContactUs from './LandingPage/ContactUs';
 import Footer from './LandingPage/Footer';
 import PricingSection from './LandingPage/subscription';
+import PricingDetailsSection from './LandingPage/PricingSection';
+import CalculatorSection from './LandingPage/CalculatorSection';
+import QuoteSection from './LandingPage/QuoteSection';
 
 
 export default function Home() {
@@ -26,8 +29,17 @@ export default function Home() {
           <section id="feature">
             <FeaturedSection/>
           </section>
-          <section id="subscribtion">
+          {/* <section id="subscribtion">
             <PricingSection/>
+          </section> */}
+          <section id="pricing">
+            <PricingDetailsSection/>
+          </section>
+          <section id="calculator">
+            <CalculatorSection/>
+          </section>
+          <section id="quote">
+            <QuoteSection/>
           </section>
           <section id="service">
             <Services/>

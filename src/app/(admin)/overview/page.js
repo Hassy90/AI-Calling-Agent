@@ -173,7 +173,9 @@ export default function OverviewPage() {
         setDurationData(durData);
 
         // Process calls data for activity timeline
-        const processedCalls = (data.calls || []).map((call, index) => {
+        const processedCalls = [...(data.calls || [])]
+          .sort((a, b) => new Date(b.started_at) - new Date(a.started_at))
+          .map((call) => {
           const startTime = new Date(call.started_at);
           const now = new Date();
           const minutesAgo = Math.floor((now - startTime) / (1000 * 60));
@@ -215,7 +217,7 @@ export default function OverviewPage() {
             time: timeAgo,
             duration,
           };
-        }).reverse(); // Show most recent first
+        });
 
         setCallsData(processedCalls);
         setLoading(false);
