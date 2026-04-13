@@ -597,6 +597,62 @@ export const deleteClonedVoice = async () => {
   }
 };
 
+/*
+    GET: Custom Voice Preference
+*/
+export const getCustomVoicePreference = async () => {
+  try {
+    const userId = getUserId();
+    if (!userId) {
+      throw new Error('User ID not found');
+    }
+
+    const url = `${API_BASE_URL}/api/calls/settings/custom-voice?user_id=${userId}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'accept': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    });
+
+    return await parseJsonResponse(response, 'getCustomVoicePreference');
+  } catch (error) {
+    console.error('[getCustomVoicePreference] Error:', error.message);
+    throw error;
+  }
+};
+
+/*
+    PATCH: Update Custom Voice Preference
+*/
+export const updateCustomVoicePreference = async (customVoice) => {
+  try {
+    const userId = getUserId();
+    if (!userId) {
+      throw new Error('User ID not found');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/calls/settings/custom-voice`, {
+      method: 'PATCH',
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        custom_voice: customVoice,
+      }),
+    });
+
+    return await parseJsonResponse(response, 'updateCustomVoicePreference');
+  } catch (error) {
+    console.error('[updateCustomVoicePreference] Error:', error.message);
+    throw error;
+  }
+};
+
 
 
 

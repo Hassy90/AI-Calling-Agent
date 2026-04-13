@@ -23,7 +23,9 @@ import {
   deleteCallSchedulingRegion,
   cloneVoice,
   getClonedVoice,
-  deleteClonedVoice
+  deleteClonedVoice,
+  getCustomVoicePreference,
+  updateCustomVoicePreference
 } from '@/app/lib/settingsApi';
 
 export default function SettingsCompliancePage() {
@@ -67,6 +69,9 @@ export default function SettingsCompliancePage() {
   const [isLoadingVoice, setIsLoadingVoice] = useState(false);
   const [isEditingVoice, setIsEditingVoice] = useState(false);
   const [isDeletingVoice, setIsDeletingVoice] = useState(false);
+  const [customVoiceEnabled, setCustomVoiceEnabled] = useState(false);
+  const [isLoadingCustomVoicePreference, setIsLoadingCustomVoicePreference] = useState(false);
+  const [isUpdatingCustomVoicePreference, setIsUpdatingCustomVoicePreference] = useState(false);
 
   // Loading state for entire page
   const [isLoading, setIsLoading] = useState(true);
@@ -85,6 +90,7 @@ export default function SettingsCompliancePage() {
         fetchCallScheduling(),
         fetchRecordingRetention(),
         fetchConsentPolicy(),
+        fetchCustomVoicePreference(),
         fetchClonedVoice()
       ]);
     } catch (error) {
@@ -519,6 +525,49 @@ export default function SettingsCompliancePage() {
     }
   };
 
+  const fetchCustomVoicePreference = async () => {
+    setIsLoadingCustomVoicePreference(true);
+    try {
+      const response = await getCustomVoicePreference();
+      setCustomVoiceEnabled(Boolean(response?.custom_voice));
+    } catch (error) {
+      console.error('Error fetching custom voice preference:', error);
+      setCustomVoiceEnabled(false);
+    } finally {
+      setIsLoadingCustomVoicePreference(false);
+    }
+  };
+
+  const handleToggleCustomVoicePreference = async () => {
+    const nextValue = !customVoiceEnabled;
+
+    setIsUpdatingCustomVoicePreference(true);
+    try {
+      const response = await updateCustomVoicePreference(nextValue);
+      const updatedPreference = Boolean(response?.custom_voice);
+      setCustomVoiceEnabled(updatedPreference);
+
+      if (!updatedPreference) {
+        setIsEditingVoice(false);
+      }
+
+      setToast({
+        show: true,
+        message: `Custom voice ${updatedPreference ? 'enabled' : 'disabled'} successfully!`,
+        type: 'success'
+      });
+    } catch (error) {
+      console.error('Error updating custom voice preference:', error);
+      setToast({
+        show: true,
+        message: `Error updating custom voice preference: ${error.message}`,
+        type: 'error'
+      });
+    } finally {
+      setIsUpdatingCustomVoicePreference(false);
+    }
+  };
+
   // Save All Settings Handler
   const handleSaveAll = async () => {
     try {
@@ -644,20 +693,54 @@ export default function SettingsCompliancePage() {
             />
 
             {/* Section 5: Voice Cloning */}
-            <VoiceCloning
-              currentVoice={currentVoice}
-              isLoadingVoice={isLoadingVoice}
-              isEditingVoice={isEditingVoice}
-              isSavingVoice={isSavingVoice}
-              isDeletingVoice={isDeletingVoice}
-              onEdit={() => setIsEditingVoice(true)}
-              onSave={handleSaveVoiceCloning}
-              onDelete={handleDeleteVoice}
-              onCancel={() => {
-                setIsEditingVoice(false);
-                fetchClonedVoice();
-              }}
-            />
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Custom Voice Preference</h2>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                    Toggle custom voice usage for calls.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={customVoiceEnabled}
+                  onClick={handleToggleCustomVoicePreference}
+                  disabled={isLoadingCustomVoicePreference || isUpdatingCustomVoicePreference}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${customVoiceEnabled ? 'bg-blue-600' : 'bg-gray-300'} ${(isLoadingCustomVoicePreference || isUpdatingCustomVoicePreference) ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <span className="sr-only">Enable custom voice</span>
+                  <span
+                    className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${customVoiceEnabled ? 'translate-x-5' : 'translate-x-1'}`}
+                  />
+                </button>
+              </div>
+
+              {isLoadingCustomVoicePreference ? (
+                <div className="py-4">
+                  <p className="text-sm text-gray-500">Loading custom voice preference...</p>
+                </div>
+              ) : customVoiceEnabled ? (
+                <VoiceCloning
+                  currentVoice={currentVoice}
+                  isLoadingVoice={isLoadingVoice}
+                  isEditingVoice={isEditingVoice}
+                  isSavingVoice={isSavingVoice}
+                  isDeletingVoice={isDeletingVoice}
+                  onEdit={() => setIsEditingVoice(true)}
+                  onSave={handleSaveVoiceCloning}
+                  onDelete={handleDeleteVoice}
+                  onCancel={() => {
+                    setIsEditingVoice(false);
+                    fetchClonedVoice();
+                  }}
+                />
+              ) : (
+                <div className="rounded-lg border border-dashed border-gray-300 p-6 text-center">
+                  <p className="text-sm text-gray-600">Custom voice is disabled. Enable the toggle to manage your cloned voice.</p>
+                </div>
+              )}
+            </div>
 
           </div>
 
