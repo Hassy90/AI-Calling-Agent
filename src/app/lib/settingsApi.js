@@ -64,7 +64,7 @@ export const getBusinessProfile = async () => {
 
     return await parseJsonResponse(response, 'getBusinessProfile');
   } catch (error) {
-    console.error('[getBusinessProfile] Error:', error.message);
+    // console.error('[getBusinessProfile] Error:', error.message);
     throw error;
   }
 };
@@ -97,7 +97,7 @@ export const saveBusinessProfile = async (businessData) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Error response:', errorText);
+      // console.error('Error response:', errorText);
       throw new Error(`Failed to save business profile: ${response.statusText}`);
     }
 
@@ -105,7 +105,7 @@ export const saveBusinessProfile = async (businessData) => {
     // console.log('Business profile saved:', data);
     return data;
   } catch (error) {
-    console.error('Error saving business profile:', error);
+    // console.error('Error saving business profile:', error);
     throw error;
   }
 };
@@ -156,7 +156,7 @@ export const saveCallScheduling = async (schedulingData) => {
     // console.log("Call scheduling response: ", data);
     return data;
   } catch (error) {
-    console.error('Error saving call scheduling:', error);
+    // console.error('Error saving call scheduling:', error);
     throw error;
   }
 };
@@ -187,7 +187,7 @@ export const getCallScheduling = async () => {
     // console.log('[getCallScheduling] Regions:', data.regions, 'Is array?', Array.isArray(data.regions));
     return data;
   } catch (error) {
-    console.error('[getCallScheduling] Error:', error.message);
+    // console.error('[getCallScheduling] Error:', error.message);
     throw error;
   }
 };
@@ -235,7 +235,7 @@ export const updateCallSchedulingRegion = async (regionId, regionData) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Update error response:', errorText);
+      // console.error('Update error response:', errorText);
       throw new Error(`Failed to update call scheduling region: ${response.statusText}`);
     }
 
@@ -243,7 +243,7 @@ export const updateCallSchedulingRegion = async (regionId, regionData) => {
     // console.log('Update response data:', data);
     return data;
   } catch (error) {
-    console.error('Error updating call scheduling region:', error);
+    // console.error('Error updating call scheduling region:', error);
     throw error;
   }
 };
@@ -277,7 +277,7 @@ export const deleteCallSchedulingRegion = async (regionId) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Delete error response:', errorText);
+      // console.error('Delete error response:', errorText);
       throw new Error(`Failed to delete call scheduling region: ${response.statusText}`);
     }
 
@@ -285,7 +285,7 @@ export const deleteCallSchedulingRegion = async (regionId) => {
     // console.log('Delete response data:', data);
     return data;
   } catch (error) {
-    console.error('Error deleting call scheduling region:', error);
+    // console.error('Error deleting call scheduling region:', error);
     throw error;
   }
 };
@@ -318,7 +318,7 @@ export const saveRecordingRetention = async (retentionData) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Error response:', errorText);
+      // console.error('Error response:', errorText);
       throw new Error(`Failed to save recording retention settings: ${response.statusText}`);
     }
 
@@ -326,7 +326,7 @@ export const saveRecordingRetention = async (retentionData) => {
     // console.log('Recording retention saved:', data);
     return data;
   } catch (error) {
-    console.error('Error saving recording retention settings:', error);
+    // console.error('Error saving recording retention settings:', error);
     throw error;
   }
 };
@@ -355,7 +355,7 @@ export const getRecordingRetention = async () => {
 
     return await parseJsonResponse(response, 'getRecordingRetention');
   } catch (error) {
-    console.error('[getRecordingRetention] Error:', error.message);
+    // console.error('[getRecordingRetention] Error:', error.message);
     throw error;
   }
 };
@@ -385,7 +385,7 @@ export const getConsentPolicy = async () => {
 
     return await parseJsonResponse(response, 'getConsentPolicy');
   } catch (error) {
-    console.error('[getConsentPolicy] Error:', error.message);
+    // console.error('[getConsentPolicy] Error:', error.message);
     throw error;
   }
 };
@@ -419,7 +419,7 @@ export const saveConsentPolicy = async (script) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error saving consent policy:', error);
+    // console.error('Error saving consent policy:', error);
     throw error;
   }
 };
@@ -454,7 +454,7 @@ export const updateConsentPolicy = async (script) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error updating consent policy:', error);
+    // console.error('Error updating consent policy:', error);
     throw error;
   }
 };
@@ -492,7 +492,7 @@ export const cloneVoice = async (audioFile, voiceName) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error cloning voice:', error);
+    // console.error('Error cloning voice:', error);
     throw error;
   }
 };
@@ -560,7 +560,7 @@ const userId = localStorage.getItem('user_id');
     // console.log('Mapped voice data:', mappedData);
     return mappedData;
   } catch (error) {
-    console.error('Error fetching cloned voice:', error);
+    // console.error('Error fetching cloned voice:', error);
     // Return null instead of throwing to prevent blocking the settings page
     return null;
   }
@@ -592,7 +592,7 @@ export const deleteClonedVoice = async () => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error deleting cloned voice:', error);
+    //  console.error('Error deleting cloned voice:', error);
     throw error;
   }
 };
@@ -618,7 +618,7 @@ export const getCustomVoicePreference = async () => {
 
     return await parseJsonResponse(response, 'getCustomVoicePreference');
   } catch (error) {
-    console.error('[getCustomVoicePreference] Error:', error.message);
+    // console.error('[getCustomVoicePreference] Error:', error.message);  
     throw error;
   }
 };
@@ -648,7 +648,7 @@ export const updateCustomVoicePreference = async (customVoice) => {
 
     return await parseJsonResponse(response, 'updateCustomVoicePreference');
   } catch (error) {
-    console.error('[updateCustomVoicePreference] Error:', error.message);
+    // console.error('[updateCustomVoicePreference] Error:', error.message);
     throw error;
   }
 };
