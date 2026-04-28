@@ -7,7 +7,7 @@ import BusinessProfile from '@/app/components/admin/settings/BusinessProfile';
 import CallScheduling from '@/app/components/admin/settings/CallScheduling';
 import RecordingRetention from '@/app/components/admin/settings/RecordingRetention';
 import ConsentPolicy from '@/app/components/admin/settings/ConsentPolicy';
-import VoiceCloning from '@/app/components/admin/settings/VoiceCloning';
+// import VoiceCloning from '@/app/components/admin/settings/VoiceCloning';
 import { useState, useEffect } from 'react';
 import { 
   saveBusinessProfile, 
@@ -692,8 +692,10 @@ export default function SettingsCompliancePage() {
               }}
             />
 
+
+            {/* temp commenting for demo/testing pov 28-04-2026 */}
             {/* Section 5: Voice Cloning */}
-            <div className="bg-white rounded-lg shadow p-4 sm:p-6 space-y-4">
+            {/* <div className="bg-white rounded-lg shadow p-4 sm:p-6 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
                   <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Custom Voice Preference</h2>
@@ -740,7 +742,7 @@ export default function SettingsCompliancePage() {
                   <p className="text-sm text-gray-600">Custom voice is disabled. Enable the toggle to manage your cloned voice.</p>
                 </div>
               )}
-            </div>
+            </div> */}
 
           </div>
 
