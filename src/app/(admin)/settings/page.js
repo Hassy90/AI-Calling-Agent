@@ -7,7 +7,7 @@ import BusinessProfile from '@/app/components/admin/settings/BusinessProfile';
 import CallScheduling from '@/app/components/admin/settings/CallScheduling';
 import RecordingRetention from '@/app/components/admin/settings/RecordingRetention';
 import ConsentPolicy from '@/app/components/admin/settings/ConsentPolicy';
-// import VoiceCloning from '@/app/components/admin/settings/VoiceCloning';
+import VoiceCloning from '@/app/components/admin/settings/VoiceCloning';
 import { useState, useEffect } from 'react';
 import { 
   saveBusinessProfile, 
