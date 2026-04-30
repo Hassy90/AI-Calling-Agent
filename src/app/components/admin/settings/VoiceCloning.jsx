@@ -1,4 +1,4 @@
-import { Mic, StopCircle, Play, Pause, Edit, Save, X, Info, Trash2, Upload } from 'lucide-react';
+import { Mic, StopCircle, Play, Pause, Edit, Save, X, Info, Trash2, ArrowDownToDotIcon, Plus } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import ConfirmDeleteDialog from '@/app/components/ConfirmDeleteDialog';
 
@@ -7,11 +7,13 @@ export default function VoiceCloning({
   isEditingVoice,
   isSavingVoice,
   isDeletingVoice,
+  isUpdatingSelectedVoice,
   currentVoice,
   onEdit,
   onSave,
   onCancel,
-  onDelete
+  onDelete,
+  onSelectVoice
 }) {
   const [voiceName, setVoiceName] = useState('');
   const [isRecording, setIsRecording] = useState(false);
@@ -155,13 +157,23 @@ export default function VoiceCloning({
     onCancel();
   };
 
+  const selectedVoice = currentVoice?.selectedVoice || {
+    voiceId: currentVoice?.voiceId,
+    voiceName: currentVoice?.voiceName,
+    category: currentVoice?.language,
+  };
+  const selectedVoiceId = currentVoice?.selectedVoiceId || selectedVoice?.voiceId || '';
+  const clonedVoices = currentVoice?.clonedVoices || [];
+  const presetVoices = currentVoice?.presetVoices || [];
+  const hasVoiceOptions = clonedVoices.length > 0 || presetVoices.length > 0;
+
   return (
-    <div className="bg-white rounded-lg shadow">
-      <div className="flex flex-col lg:grid lg:grid-cols-1 xl:grid-cols-4 gap-4 lg:gap-8 p-4 sm:p-6">
+    <div className="bg-white rounded-lg ">
+      <div className="flex flex-col lg:grid lg:grid-cols-1 xl:grid-cols-4 gap-4 lg:gap-8 ">
         {/* Left Sidebar */}
         <div className="xl:col-span-1 border-b lg:border-b-0 pb-4 lg:pb-0">
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Voice Cloning</h2>
-          <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2">Create your custom voice directly in our platform.</p>
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Custom Voice </h2>
+          <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2">Choose your custom voice directly in our platform.</p>
         </div>
 
         {/* Right Content */}
@@ -173,8 +185,8 @@ export default function VoiceCloning({
                 onClick={onEdit}
                 className="flex items-center justify-center gap-2 px-3 py-1.5 sm:py-1 bg-blue-50 text-blue-600 hover:text-blue-700 text-sm font-medium rounded-md w-full sm:w-auto"
               >
-                <Edit size={16} />
-                Edit
+                <Plus size={16} />
+                Clone your own voice
               </button>
             )}
           </div>
@@ -381,30 +393,53 @@ export default function VoiceCloning({
           ) : currentVoice ? (
             /* View Mode - Voice Exists */
             <div className="space-y-4">
+              {hasVoiceOptions && (
+                <div>
+                  <label className="block text-xs sm:text-sm text-gray-500 mb-1">Selected Voice</label>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <select
+                      value={selectedVoiceId}
+                      onChange={(e) => onSelectVoice?.(e.target.value)}
+                      disabled={isUpdatingSelectedVoice}
+                      className="w-full sm:max-w-md px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    >
+                      {clonedVoices.length > 0 && (
+                        <optgroup label="Cloned Voices">
+                          {clonedVoices.map((voice) => (
+                            <option key={voice.voiceId} value={voice.voiceId}>
+                              {voice.voiceName}
+                            </option>
+                          ))}
+                        </optgroup>
+                      )}
+                      {presetVoices.length > 0 && (
+                        <optgroup label="Preset Voices">
+                          {presetVoices.map((voice) => (
+                            <option key={voice.voiceId} value={voice.voiceId}>
+                              {voice.voiceName}
+                            </option>
+                          ))}
+                        </optgroup>
+                      )}
+                    </select>
+                    {isUpdatingSelectedVoice && (
+                      <span className="text-xs text-gray-500">Updating...</span>
+                    )}
+                  </div>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-xs sm:text-sm text-gray-500 mb-1">Voice Name</p>
-                  <p className="text-sm sm:text-base font-medium text-gray-900">{currentVoice.voiceName}</p>
+                  <p className="text-sm sm:text-base font-medium text-gray-900">{selectedVoice?.voiceName || 'N/A'}</p>
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm text-gray-500 mb-1">Voice ID</p>
-                  <p className="text-sm sm:text-base font-mono text-gray-600">{currentVoice.voiceId}</p>
+                  <p className="text-xs sm:text-sm text-gray-500 mb-1">Language</p>
+                  <p className="text-sm sm:text-base font-medium text-gray-900">{selectedVoice?.category || selectedVoice?.type}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {currentVoice.language && (
-                  <div>
-                    <p className="text-xs sm:text-sm text-gray-500 mb-1">Language</p>
-                    <p className="text-sm sm:text-base text-gray-900 uppercase">{currentVoice.language}</p>
-                  </div>
-                )}
-                {/* {currentVoice.businessId && (
-                  <div>
-                    <p className="text-xs sm:text-sm text-gray-500 mb-1">Business ID</p>
-                    <p className="text-sm sm:text-base font-mono text-gray-600">{currentVoice.businessId}</p>
-                  </div>
-                )} */}
-              </div>
+           
               
               {/* Delete Button */}
               <div className="pt-4 border-t">

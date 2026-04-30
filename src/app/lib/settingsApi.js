@@ -508,7 +508,7 @@ const userId = localStorage.getItem('user_id');
     }
 
     // console.log('Fetching voice info for user:', userId);
-    const url = `${API_BASE_URL}/api/elevenlabs/voice-info/${userId}`;
+    const url = `${API_BASE_URL}/api/elevenlabs/voices/${userId}`;
     // console.log('GET Request URL:', url);
 
     const response = await fetch(url, {
@@ -543,26 +543,102 @@ const userId = localStorage.getItem('user_id');
     const data = await response.json();
     // console.log('Voice info data:', data);
     
-    // Check if voice data exists
-    if (!data.success || !data.data || !data.data.voice_id) {
-      // console.log('No custom voice configured');
+    if (!data.success || !data.data) {
       return null;
     }
-    
-    // Map API response to expected format
-    const mappedData = {
-      voiceId: data.data.voice_id,
-      voiceName: data.data.voice_name,
-      businessId: data.data.business_id,
-      language: data.data.elevenlabs_details?.verified_languages?.[0] || data.data.elevenlabs_details?.fine_tuning?.language || null,
-      createdAt: data.data.elevenlabs_details?.created_at_unix,
+
+    const normalizeVoice = (voice) => ({
+      voiceId: voice.voice_id,
+      voiceName: voice.voice_name,
+      type: voice.type,
+      category: voice.category || null,
+      clonedAt: voice.cloned_at || null,
+    });
+
+    const selectedVoiceId = data.data.selected_voice_id || null;
+    const clonedVoices = Array.isArray(data.data.cloned_voices)
+      ? data.data.cloned_voices.map(normalizeVoice)
+      : [];
+    const presetVoices = Array.isArray(data.data.preset_voices)
+      ? data.data.preset_voices.map(normalizeVoice)
+      : [];
+
+    // Backward compatibility for older voice-info response payload.
+    if (!selectedVoiceId && data.data.voice_id) {
+      const legacyVoice = {
+        voiceId: data.data.voice_id,
+        voiceName: data.data.voice_name,
+        type: 'cloned',
+        category: null,
+        clonedAt: data.data.elevenlabs_details?.created_at_unix || null,
+      };
+
+      return {
+        selectedVoiceId: legacyVoice.voiceId,
+        selectedVoice: legacyVoice,
+        voices: [legacyVoice],
+        clonedVoices: [legacyVoice],
+        presetVoices: [],
+        voiceId: legacyVoice.voiceId,
+        voiceName: legacyVoice.voiceName,
+        language: data.data.elevenlabs_details?.verified_languages?.[0] || data.data.elevenlabs_details?.fine_tuning?.language || null,
+        createdAt: legacyVoice.clonedAt,
+      };
+    }
+
+    const voices = [...clonedVoices, ...presetVoices];
+    const selectedVoice = voices.find((voice) => voice.voiceId === selectedVoiceId) || null;
+
+    if (!selectedVoice && voices.length === 0) {
+      return null;
+    }
+
+    return {
+      selectedVoiceId,
+      selectedVoice,
+      voices,
+      clonedVoices,
+      presetVoices,
+      voiceId: selectedVoice?.voiceId || null,
+      voiceName: selectedVoice?.voiceName || null,
+      language: selectedVoice?.category || null,
+      createdAt: selectedVoice?.clonedAt || null,
     };
-    // console.log('Mapped voice data:', mappedData);
-    return mappedData;
   } catch (error) {
     // console.error('Error fetching cloned voice:', error);
     // Return null instead of throwing to prevent blocking the settings page
     return null;
+  }
+};
+
+/*
+    PUT: Update Selected Voice
+*/
+export const updateSelectedVoice = async (voiceId) => {
+  try {
+    const userId = getUserId();
+    if (!userId) {
+      throw new Error('User ID not found. Please log in again.');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/elevenlabs/select-voice/${userId}`, {
+      method: 'PUT',
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
+      body: JSON.stringify({ voice_id: voiceId }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || `Failed to update selected voice: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
   }
 };
 
