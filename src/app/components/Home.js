@@ -32,9 +32,9 @@ export default function Home() {
           {/* <section id="subscribtion">
             <PricingSection/>
           </section> */}
-          <section id="pricing">
+          {/* <section id="pricing">
             <PricingDetailsSection/>
-          </section>
+          </section> */}
           <section id="calculator">
             <CalculatorSection/>
           </section>

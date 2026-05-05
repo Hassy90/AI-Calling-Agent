@@ -2,34 +2,29 @@
 
 import { useMemo, useState } from 'react';
 
-const AGENT_RATE = 0.27;
-const PLATFORM_RATE = 0.1;
+const BASE_RATE = 0.10;
+const VOICE_CUSTOMIZATION_RATE = 0.05;
 
-const formatAed = (amount) =>
-  `${amount.toLocaleString('en-AE', {
+const formatUsd = (amount) =>
+  `$${amount.toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  })} AED`;
+  })}`;
 
 export default function CalculatorSection() {
   const [monthlyMinutes, setMonthlyMinutes] = useState(5000);
-  const [phoneNumbers, setPhoneNumbers] = useState(2);
   const [numberType, setNumberType] = useState('neurovise');
+  const [customizeVoice, setCustomizeVoice] = useState(false);
 
   const pricing = useMemo(() => {
     const safeMinutes = Number.isFinite(Number(monthlyMinutes)) ? Math.max(0, Number(monthlyMinutes)) : 0;
-    const safeNumbers = Number.isFinite(Number(phoneNumbers)) ? Math.max(0, Number(phoneNumbers)) : 0;
 
-    const twilioRate = numberType === 'neurovise' ? 0.82 : 0.72;
-    const phoneNumberFee = numberType === 'neurovise' ? safeNumbers * 8 : safeNumbers * 3;
+    const baseCost = safeMinutes * BASE_RATE;
+    const voiceCost = customizeVoice ? safeMinutes * VOICE_CUSTOMIZATION_RATE : 0;
+    const totalMonthlyCost = baseCost + voiceCost;
 
-    const twilioCost = safeMinutes * twilioRate + phoneNumberFee;
-    const agentCost = safeMinutes * AGENT_RATE;
-    const platformFee = safeMinutes * PLATFORM_RATE;
-    const totalMonthlyCost = twilioCost + agentCost + platformFee;
-
-    return { twilioCost, agentCost, platformFee, totalMonthlyCost };
-  }, [monthlyMinutes, phoneNumbers, numberType]);
+    return { baseCost, voiceCost, totalMonthlyCost };
+  }, [monthlyMinutes, customizeVoice]);
 
   return (
     <section className="bg-white py-16 md:py-24">
@@ -60,17 +55,6 @@ export default function CalculatorSection() {
                 />
               </label>
 
-              <label className="block">
-                <span className="mb-2 block text-sm font-medium text-gray-700">Phone Numbers</span>
-                <input
-                  type="number"
-                  min="0"
-                  value={phoneNumbers}
-                  onChange={(e) => setPhoneNumbers(e.target.value)}
-                  className="w-full rounded-lg border text-gray-700 border-gray-300 px-4 py-2.5 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200"
-                />
-              </label>
-
               <div>
                 <p className="mb-2 text-sm font-medium text-gray-700">Number Type</p>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -83,7 +67,7 @@ export default function CalculatorSection() {
                         : 'border-gray-300 bg-white text-gray-700 hover:border-cyan-400'
                     }`}
                   >
-                    Use Neurovise Number
+                    Provided by Neurovise Number
                   </button>
                   <button
                     type="button"
@@ -94,10 +78,21 @@ export default function CalculatorSection() {
                         : 'border-gray-300 bg-white text-gray-700 hover:border-cyan-400'
                     }`}
                   >
-                    Use Own Number
+                    Use Your Own Number
                   </button>
                 </div>
+                <p className="mt-2 text-xs text-gray-500">Phone number charges are billed separately based on your carrier</p>
               </div>
+
+              <label className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={customizeVoice}
+                  onChange={(e) => setCustomizeVoice(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-cyan-500 cursor-pointer"
+                />
+                <span className="text-sm font-medium text-gray-700">Need Customize Voice ? </span>
+              </label>
             </div>
           </div>
 
@@ -106,23 +101,43 @@ export default function CalculatorSection() {
 
             <div className="mt-6 space-y-4">
               <div className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3">
-                <span className="text-sm font-medium text-gray-700">Twilio Cost</span>
-                <span className="text-sm font-semibold text-gray-900">{formatAed(pricing.twilioCost)}</span>
+                <span className="text-sm font-medium text-gray-700">Base Cost (${BASE_RATE}/min)</span>
+                <span className="text-sm font-semibold text-gray-900">{formatUsd(pricing.baseCost)}</span>
               </div>
-              <div className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3">
-                <span className="text-sm font-medium text-gray-700">Agent Cost</span>
-                <span className="text-sm font-semibold text-gray-900">{formatAed(pricing.agentCost)}</span>
-              </div>
-              <div className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3">
-                <span className="text-sm font-medium text-gray-700">Platform Fee</span>
-                <span className="text-sm font-semibold text-gray-900">{formatAed(pricing.platformFee)}</span>
-              </div>
+              {customizeVoice && (
+                <div className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3">
+                  <span className="text-sm font-medium text-gray-700">Customize Voice (${VOICE_CUSTOMIZATION_RATE}/min)</span>
+                  <span className="text-sm font-semibold text-gray-900">{formatUsd(pricing.voiceCost)}</span>
+                </div>
+              )}
             </div>
 
             <div className="mt-6 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-4 text-white shadow-lg">
               <p className="text-sm">Total Monthly Cost</p>
-              <p className="mt-1 text-2xl font-bold">{formatAed(pricing.totalMonthlyCost)}</p>
+              <p className="mt-1 text-2xl font-bold">{formatUsd(pricing.totalMonthlyCost)}</p>
             </div>
+
+            <button
+              onClick={() => {
+                const quoteSection = document.getElementById('quote-section');
+                if (quoteSection) {
+                  quoteSection.scrollIntoView({ behavior: 'smooth' });
+                  // Store data in sessionStorage to pass to QuoteSection
+                  sessionStorage.setItem(
+                    'calculatorData',
+                    JSON.stringify({
+                      monthlyMinutes,
+                      customizeVoice,
+                      numberType,
+                      totalCost: pricing.totalMonthlyCost,
+                    })
+                  );
+                }
+              }}
+              className="mt-4 w-full rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-cyan-600 transition hover:bg-gray-50"
+            >
+              Get a Quote
+            </button>
           </div>
         </div>
       </div>
