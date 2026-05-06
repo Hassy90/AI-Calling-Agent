@@ -121,17 +121,27 @@ export default function CalculatorSection() {
               onClick={() => {
                 const quoteSection = document.getElementById('quote-section');
                 if (quoteSection) {
+                  // Ensure monthlyMinutes is converted to a number
+                  const numMinutes = Number.isFinite(Number(monthlyMinutes)) ? Math.max(0, Number(monthlyMinutes)) : 0;
+                  
+                  const dataToStore = {
+                    monthlyMinutes: numMinutes,
+                    customizeVoice,
+                    numberType,
+                    totalCost: pricing.totalMonthlyCost,
+                    timestamp: Date.now(), // Add timestamp to force updates
+                  };
+                  
+                  console.log('📦 Storing calculator data:', dataToStore);
+                  sessionStorage.setItem('calculatorData', JSON.stringify(dataToStore));
+                  
+                  // Trigger custom event for components listening
+                  const event = new CustomEvent('calculatorDataUpdated', { detail: dataToStore });
+                  window.dispatchEvent(event);
+                  
+                  console.log('📡 Custom event dispatched');
+                  
                   quoteSection.scrollIntoView({ behavior: 'smooth' });
-                  // Store data in sessionStorage to pass to QuoteSection
-                  sessionStorage.setItem(
-                    'calculatorData',
-                    JSON.stringify({
-                      monthlyMinutes,
-                      customizeVoice,
-                      numberType,
-                      totalCost: pricing.totalMonthlyCost,
-                    })
-                  );
                 }
               }}
               className="mt-4 w-full rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-cyan-600 transition hover:bg-gray-50"

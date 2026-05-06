@@ -29,13 +29,65 @@ export default function QuoteSection() {
   const [formData, setFormData] = useState(initialFormState);
   const [calculatorData, setCalculatorData] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Load calculator data from sessionStorage
-    const storedData = sessionStorage.getItem('calculatorData');
-    if (storedData) {
-      setCalculatorData(JSON.parse(storedData));
-    }
+    const loadCalculatorData = () => {
+      const storedData = sessionStorage.getItem('calculatorData');
+      if (storedData) {
+        try {
+          const parsedData = JSON.parse(storedData);
+          
+          // Ensure monthlyMinutes is a number
+          if (parsedData.monthlyMinutes) {
+            parsedData.monthlyMinutes = Number(parsedData.monthlyMinutes);
+          }
+          
+          setCalculatorData(parsedData);
+          setError(null); // Clear any previous errors
+          // console.log('✅ Calculator data loaded in QuoteSection:', parsedData);
+          // console.log('Data types:', {
+          //   monthlyMinutes: typeof parsedData.monthlyMinutes,
+          //   customizeVoice: typeof parsedData.customizeVoice,
+          //   numberType: typeof parsedData.numberType,
+          //   totalCost: typeof parsedData.totalCost,
+          // });
+        } catch (err) {
+          console.error('❌ Error parsing calculator data:', err);
+          setError('Failed to load calculator data. Please try again.');
+        }
+      } else {
+        // console.log('⚠️ No calculator data found in sessionStorage');
+        setCalculatorData(null);
+      }
+    };
+
+    // Initial load
+    loadCalculatorData();
+
+    // Listen for custom calculator update events
+    const handleCalculatorUpdate = (e) => {
+      // console.log('🔔 Calculator update event received:', e.detail);
+      loadCalculatorData();
+    };
+
+    // Also listen for standard storage events (for cross-tab compatibility)
+    const handleStorageChange = (e) => {
+      if (e.key === 'calculatorData') {
+        // console.log('🔔 Storage event triggered for calculatorData');
+        loadCalculatorData();
+      }
+    };
+
+    window.addEventListener('calculatorDataUpdated', handleCalculatorUpdate);
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('calculatorDataUpdated', handleCalculatorUpdate);
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const handleChange = (e) => {
@@ -43,35 +95,113 @@ export default function QuoteSection() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Prepare the submission data
-    const submissionData = {
-      name: formData.name,
-      email: formData.email,
-      timeslot: {
-        date: formData.date,
-        time: formData.time,
-        timezone: formData.timezone,
-      },
-      message: formData.message,
-      // Include calculator data
-      monthlyMinutes: calculatorData?.monthlyMinutes || 0,
-      customizeVoice: calculatorData?.customizeVoice || false,
-      numberType: calculatorData?.numberType || 'neurovise',
-      estimatedMonthlyCost: calculatorData?.totalCost || 0,
-    };
+    setIsLoading(true);
+    setError(null);
 
-    console.log('Quote Submission Data:', submissionData);
-    // TODO: Send to endpoint when provided
-    // await fetch('/api/quotes', { method: 'POST', body: JSON.stringify(submissionData) })
+    // Validate that we have valid minutes
+    const noOfMins = calculatorData?.monthlyMinutes || 0;
+    if (!noOfMins || noOfMins === 0) {
+      setError('Please specify the number of monthly minutes needed.');
+      setIsLoading(false);
+      return;
+    }
 
-    setIsSubmitted(true);
-    setFormData(initialFormState);
-    
-    // Reset submitted message after 5 seconds
-    setTimeout(() => setIsSubmitted(false), 5000);
+    // Validate form fields
+    if (!formData.name?.trim()) {
+      setError('Please enter your name.');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!formData.email?.trim()) {
+      setError('Please enter your email address.');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!formData.date) {
+      setError('Please select a preferred date.');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!formData.time) {
+      setError('Please select a preferred time.');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // Combine date and time into ISO datetime string
+      const dateTimeString = `${formData.date}T${formData.time}:00`;
+      const datetime = new Date(dateTimeString).toISOString();
+
+      // Prepare the submission data according to endpoint schema
+      const submissionData = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        datetime: datetime,
+        message: formData.message?.trim() || '', // Send as string, not array
+        no_of_mins: String(noOfMins),
+      };
+
+      // console.log('📤 Submitting quote request to API:', JSON.stringify(submissionData, null, 2));
+      // console.log('💾 Calculator data used:', {
+      //   monthlyMinutes: calculatorData.monthlyMinutes,
+      //   numberType: calculatorData.numberType,
+      //   customizeVoice: calculatorData.customizeVoice,
+      //   totalCost: calculatorData.totalCost,
+      // });
+
+      // Send to endpoint
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/contact/meeting`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submissionData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('API Error Response:', errorData);
+        
+        // Extract detailed error message from API response
+        let errorMessage = `API error: ${response.status}`;
+        if (errorData.detail) {
+          if (Array.isArray(errorData.detail)) {
+            errorMessage = errorData.detail.map(err => {
+              if (typeof err === 'object' && err.msg) {
+                return `${err.loc?.join('.')} - ${err.msg}`;
+              }
+              return String(err);
+            }).join(', ');
+          } else {
+            errorMessage = String(errorData.detail);
+          }
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+        
+        throw new Error(errorMessage);
+      }
+
+      const result = await response.json();
+      // console.log('✅ Quote Submission Success:', result);
+
+      setIsLoading(false);
+      setIsSubmitted(true);
+      setFormData(initialFormState);
+
+      // Reset submitted message after 5 seconds
+      setTimeout(() => setIsSubmitted(false), 5000);
+    } catch (err) {
+      console.error('❌ Quote Submission Error:', err);
+      setError(err.message || 'Failed to submit quote request. Please try again.');
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -91,44 +221,49 @@ export default function QuoteSection() {
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {/* Calculator Summary */}
-          {calculatorData && (
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
-              <h3 className="text-lg font-semibold text-white mb-4">Your Configuration</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-300">Monthly Minutes</span>
-                  <span className="text-sm font-semibold text-cyan-200">{calculatorData.monthlyMinutes?.toLocaleString()}</span>
+          {!calculatorData && !isLoading && !isSubmitted && (
+            <div className="lg:col-span-3 rounded-lg border border-amber-400/40 bg-amber-400/10 px-4 py-3 text-sm text-amber-200 mb-4">
+              ⚠ Please use the calculator above to configure your requirements before requesting a quote.
+            </div>
+          )}
+
+          {/* Loading State */}
+          {isLoading && (
+            <div className="lg:col-span-3 flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-12 backdrop-blur-md">
+              <div className="text-center">
+                <div className="mb-4 flex justify-center">
+                  <div className="h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-cyan-500"></div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-300">Number Type</span>
-                  <span className="text-sm font-semibold text-cyan-200">
-                    {calculatorData.numberType === 'neurovise' ? 'Neurovise Number' : 'Own Number'}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-300">Customize Voice</span>
-                  <span className={`text-sm font-semibold ${calculatorData.customizeVoice ? 'text-emerald-200' : 'text-gray-400'}`}>
-                    {calculatorData.customizeVoice ? 'Yes' : 'No'}
-                  </span>
-                </div>
-                <div className="border-t border-white/10 pt-3 mt-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-300">Est. Monthly Cost</span>
-                    <span className="text-sm font-bold text-cyan-300">
-                      ${calculatorData.totalCost?.toFixed(2)}
-                    </span>
+                <p className="text-lg font-semibold text-white">Submitting your quote request...</p>
+                <p className="mt-2 text-sm text-gray-400">Please wait while we process your information.</p>
+              </div>
+            </div>
+          )}
+
+          {/* Thank You State */}
+          {isSubmitted && (
+            <div className="lg:col-span-3 flex items-center justify-center rounded-2xl border border-emerald-400/40 bg-emerald-400/5 p-12 backdrop-blur-md">
+              <div className="text-center">
+                <div className="mb-4 flex justify-center">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-400/20">
+                    <svg className="h-8 w-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
                   </div>
                 </div>
+                <h3 className="text-2xl font-bold text-white">Thank You!</h3>
+                <p className="mt-2 text-gray-300">Your quote request has been submitted successfully.</p>
+                <p className="mt-1 text-sm text-gray-400">Our team will review your details and reach out shortly.</p>
               </div>
             </div>
           )}
 
           {/* Quote Form */}
-          <form
-            onSubmit={handleSubmit}
-            className={`${calculatorData ? 'lg:col-span-2' : 'lg:col-span-3'} rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md md:p-8`}
-          >
+          {!isLoading && !isSubmitted && (
+            <form
+              onSubmit={handleSubmit}
+              className="lg:col-span-3 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md md:p-8"
+            >
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <label className="block md:col-span-1">
                 <span className="mb-2 block text-sm font-medium text-gray-200">Name *</span>
@@ -215,18 +350,27 @@ export default function QuoteSection() {
             <div className="mt-6">
               <button
                 type="submit"
-                className="w-full rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 font-semibold text-white transition-all hover:from-cyan-600 hover:to-blue-700"
+                disabled={isLoading || !calculatorData}
+                className={`w-full rounded-lg px-6 py-3 font-semibold text-white transition-all ${
+                  isLoading || !calculatorData
+                    ? 'bg-gray-600 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700'
+                }`}
               >
-                Submit Quote Request
+                {isLoading ? 'Submitting...' : 'Submit Quote Request'}
               </button>
+              {!calculatorData && (
+                <p className="mt-2 text-xs text-gray-400 text-center">Scroll up and use the calculator to get started</p>
+              )}
             </div>
 
-            {isSubmitted && (
-              <div className="mt-4 rounded-lg border border-emerald-400/40 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">
-                ✓ Success! Your quote request has been submitted. Our team will reach out shortly.
+            {error && (
+              <div className="mt-4 rounded-lg border border-red-400/40 bg-red-400/10 px-4 py-3 text-sm text-red-200">
+                ✗ {error}
               </div>
             )}
-          </form>
+            </form>
+          )}
         </div>
       </div>
     </section>
