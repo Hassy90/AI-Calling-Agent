@@ -6,11 +6,13 @@ function getUserIdFromToken(token) {
     if (!token) return null;
 
     // JWT format: header.payload.signature
-    const payloadBase64 = token.split('.')[1];
+    const payloadBase64 = token.split(".")[1];
     if (!payloadBase64) return null;
 
     // Decode Base64 (URL-safe)
-    const payloadJson = atob(payloadBase64.replace(/-/g, '+').replace(/_/g, '/'));
+    const payloadJson = atob(
+      payloadBase64.replace(/-/g, "+").replace(/_/g, "/"),
+    );
     const payload = JSON.parse(payloadJson);
 
     // backend sets subject in 'sub' and/or may include 'user_id'
@@ -24,18 +26,18 @@ function getUserIdFromToken(token) {
 export async function loginUser({ username, password }) {
   try {
     const body = new URLSearchParams();
-    body.append('grant_type', 'password');
-    body.append('username', username);
-    body.append('password', password);
-    body.append('scope', '');
-    body.append('client_id', 'string');
-    body.append('client_secret', 'string');
+    body.append("grant_type", "password");
+    body.append("username", username);
+    body.append("password", password);
+    body.append("scope", "");
+    body.append("client_id", "string");
+    body.append("client_secret", "string");
 
-    const response = await apiFetch('/api/auth/login', {
-      method: 'POST',
+    const response = await apiFetch("/api/auth/login", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json',
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
       },
       body: body.toString(),
     });
@@ -46,57 +48,62 @@ export async function loginUser({ username, password }) {
       const message = data?.detail || JSON.stringify(data);
       throw new Error(message);
     }
+// extract email from response if available and store in localStorage for later use (e.g. subscription management)
+    if (data.email) {
+      localStorage.setItem("email", data.email);
+  
+    }
 
     if (data.access_token) {
       // Store token
-      localStorage.setItem('access_token', data.access_token);
+      localStorage.setItem("access_token", data.access_token);
 
       // Extract user_id from token or use from response
       let userId = data.user_id; // First try to get from response
-      
+
       if (!userId) {
         // If not in response, extract from JWT token
         userId = getUserIdFromToken(data.access_token);
       }
-      
+
       if (userId) {
-        localStorage.setItem('user_id', userId);
+        localStorage.setItem("user_id", userId);
         // console.log("✅ Extracted and stored user_id:", userId);
       } else {
         console.warn("⚠️ user_id not found in token or response");
       }
 
       // Store subscription status from backend
-      if (typeof data.isSubscribed !== 'undefined') {
-        localStorage.setItem('isSubscribed', data.isSubscribed.toString());
+      if (typeof data.isSubscribed !== "undefined") {
+        localStorage.setItem("isSubscribed", data.isSubscribed.toString());
       } else {
         // Default to false if not provided
-        localStorage.setItem('isSubscribed', 'false');
+        localStorage.setItem("isSubscribed", "false");
       }
 
       // Store subscription tier
       if (data.subscriptionTier) {
-        localStorage.setItem('subscriptionTier', data.subscriptionTier);
+        localStorage.setItem("subscriptionTier", data.subscriptionTier);
       } else {
-        localStorage.setItem('subscriptionTier', 'free');
+        localStorage.setItem("subscriptionTier", "free");
       }
     }
 
     // If backend includes role in login response, persist it for client logic
     if (data.role) {
-      localStorage.setItem('role', data.role);
+      localStorage.setItem("role", data.role);
     }
 
-    return { 
-      success: true, 
-      token: data.access_token, 
+    return {
+      success: true,
+      token: data.access_token,
       role: data.role,
       user_id: data.user_id || getUserIdFromToken(data.access_token),
       isSubscribed: data.isSubscribed || false,
-      subscriptionTier: data.subscriptionTier || 'free'
+      subscriptionTier: data.subscriptionTier || "free",
     };
   } catch (error) {
-    console.error('❌ API Error:', error.message);
+    console.error("❌ API Error:", error.message);
     return { success: false, error: error.message };
   }
 }

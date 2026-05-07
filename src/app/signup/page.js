@@ -92,6 +92,10 @@ export default function SignupPage() {
         if (responseData.role) {
           localStorage.setItem('role', responseData.role);
         }
+           if (responseData.email) {
+      localStorage.setItem("email", responseData.email);
+  
+    }
       }
 
       // Auto-login the user after signup

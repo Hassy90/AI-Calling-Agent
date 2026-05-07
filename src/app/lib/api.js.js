@@ -1,5 +1,4 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ;
-// const BASE_URL = "https://000cbf750982.ngrok-free.app";
 
 export async function apiFetch(endpoint, options = {}) {
   const url = `${BASE_URL}${endpoint}`;
