@@ -48,11 +48,7 @@ export async function loginUser({ username, password }) {
       const message = data?.detail || JSON.stringify(data);
       throw new Error(message);
     }
-// extract email from response if available and store in localStorage for later use (e.g. subscription management)
-    if (data.email) {
-      localStorage.setItem("email", data.email);
-  
-    }
+
 
     if (data.access_token) {
       // Store token

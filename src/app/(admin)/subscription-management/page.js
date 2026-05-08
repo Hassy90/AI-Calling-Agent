@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '@/app/components/admin/AdminLayout';
 import CustomToast from '@/app/components/CustomToast';
+import MeetingPlanSection from '@/app/components/admin/subscription-management/MeetingPlanSection';
+import RecentTransactionsSection from '@/app/components/admin/subscription-management/RecentTransactionsSection';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ;
-
-// (API calls are inline in this file — reverted to inline fetches)
+// API calls go through Next.js routes to bypass CORS issues
 
 export default function MeetingRatePage() {
   const [minutes, setMinutes] = useState(null);
@@ -15,15 +15,16 @@ export default function MeetingRatePage() {
   const [processing, setProcessing] = useState(false);
   const [toast, setToast] = useState(null);
   const [userId, setUserId] = useState(null);
-  const [email, setEmail] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  // const [email, setEmail] = useState(null);
 
   const showToast = (message, type = 'success') => setToast({ message, type });
 
   useEffect(() => {
     const uid = localStorage.getItem('user_id');
-    const mail = localStorage.getItem('email');
+    // const mail = localStorage.getItem('email');
     setUserId(uid);
-    setEmail(mail);
+    // setEmail(mail);
 
     if (!uid) {
       setLoading(false);
@@ -33,10 +34,7 @@ export default function MeetingRatePage() {
     const fetchRate = async () => {
       try {
         setLoading(true);
-        const url = new URL(`${BASE_URL}/api/contact/meeting/rate`);
-        url.searchParams.set('user_id', uid);
-
-        const res = await fetch(url.toString(), {
+        const res = await fetch(`/api/meeting-rate?user_id=${uid}`, {
           method: 'GET',
           headers: { accept: 'application/json' },
         });
@@ -46,11 +44,26 @@ export default function MeetingRatePage() {
           setMinutes(Number(data.no_of_mins));
           setRate(Number(data.rate_per_minute));
         } else {
-          showToast('Failed to fetch meeting rate', 'error');
+          showToast('Could not fetch meeting rate', 'info');
         }
       } catch (err) {
         console.error('fetchRate error', err);
-        showToast('Error fetching meeting rate', 'error');
+        showToast('Could not fetch meeting rate', 'info');
+      }
+
+      // Also fetch transactions (always)
+      try {
+        const res = await fetch(`/api/transactions/${uid}`, {
+          method: 'GET',
+          headers: { accept: 'application/json' },
+        });
+
+        const data = await res.json();
+        if (data && data.success && data.transactions && data.transactions.length > 0) {
+          setTransactions(data.transactions);
+        }
+      } catch (err) {
+        console.error('fetchTransactions error', err);
       } finally {
         setLoading(false);
       }
@@ -62,20 +75,15 @@ export default function MeetingRatePage() {
   const amount = (Number(minutes || 0) * Number(rate || 0));
 
   const handleProceedToPayment = async () => {
-    if (!email) {
-      showToast('Missing email in localStorage', 'error');
-      return;
-    }
-
     setProcessing(true);
     try {
-      const res = await fetch(`${BASE_URL}/api/payments/create-checkout-session`, {
+      const res = await fetch(`/api/create-checkout-session`, {
         method: 'POST',
         headers: {
           accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ amount, email }),
+        body: JSON.stringify({ amount, user_id: userId }),
       });
 
       const data = await res.json();
@@ -94,54 +102,39 @@ export default function MeetingRatePage() {
 
   return (
     <AdminLayout>
-      <div className="min-h-screen bg-gradient-to-br  text-gray-800 from-gray-50 to-gray-100 p-4">
+      <div className="min-h-screen bg-gradient-to-br text-gray-800 from-gray-50 to-gray-100 p-7">
         {toast && (
           <CustomToast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
         )}
 
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Meeting Plan</h1>
-          <p className="text-sm text-gray-600 mt-1">Your assigned meeting minutes and rate.</p>
+          <h1 className="text-3xl font-bold text-gray-900">Subscription Management</h1>
+          <p className="text-sm text-gray-600 mt-1">Your meeting plan and payment history.</p>
         </div>
 
-        <div className="max-w-xl bg-white rounded-xl shadow p-6">
-          {loading ? (
-            <div className="flex items-center justify-center h-32">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-600" />
-            </div>
-          ) : !userId ? (
-            <div className="text-sm text-gray-700">Please login to view meeting plan.</div>
-          ) : (
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm text-gray-500">You have requested </p>
-                <p className="text-2xl font-semibold">{minutes ?? 0} minutes</p>
-              </div>
+        {loading ? (
+          <div className="flex items-center justify-center h-32">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-600" />
+          </div>
+        ) : !userId ? (
+          <div className="max-w-xl bg-white rounded-xl shadow p-6">
+            <p className="text-sm text-gray-700">Please login to view your subscription information.</p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* Meeting Plan Section */}
+            <MeetingPlanSection
+              minutes={minutes}
+              rate={rate}
+              amount={amount}
+              processing={processing}
+              onProceedToPayment={handleProceedToPayment}
+            />
 
-              <div>
-                <p className="text-sm text-gray-500">Agreed rate per minute</p>
-                <p className="text-lg font-medium">{rate ?? 0} USD</p>
-              </div>
-
-              <div>
-                <p className="text-sm text-gray-500">Total amount</p>
-                <p className="text-lg font-bold">{amount} USD</p>
-              </div>
-
-              <div className="pt-2">
-                <button
-                  onClick={handleProceedToPayment}
-                  disabled={processing}
-                  className="w-full py-2 rounded-md bg-cyan-600 text-white font-semibold disabled:opacity-50"
-                >
-                  {processing ? 'Processing...' : 'Proceed to Payment'}
-                </button>
-              </div>
-
-              <p className="text-xs text-gray-500">You will be redirected to a secure checkout to complete payment.</p>
-            </div>
-          )}
-        </div>
+            {/* Payment History Section */}
+            <RecentTransactionsSection transactions={transactions} />
+          </div>
+        )}
       </div>
     </AdminLayout>
   );
