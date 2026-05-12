@@ -8,8 +8,12 @@ const Hero = () => {
 
   const images = [
     '/images1/ai-agent1.jpg',
+    'https://surl.li/dqypni',
     '/images1/ai-agent2.jpg',
     '/images1/ai-agent3.jpg',
+  'https://surl.li/tkhbna'    
+    
+    
   ];
 
   useEffect(() => {

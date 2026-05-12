@@ -187,7 +187,7 @@ const About = () => {
               autoPlay
               // poster="/images1/video-poster.jpg"
             >
-              <source src="/video/calling-agent.mp4" type="video/mp4" />
+              <source src="https://www.pexels.com/download/video/7707060/" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
             

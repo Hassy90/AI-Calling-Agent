@@ -51,7 +51,7 @@ const Navbar = () => {
               <Phone className="w-6 h-6 text-white" />
             </div> */}
             
-            <span className={`text-2xl font-bold tracking-tight ${
+            <span className={`text-2xl font-bold tracking-tight transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-0.5 ${
               scrolled ? 'text-white' : 'text-white drop-shadow-lg'
             }`}>
               Neurovise Calling<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Agent</span>
@@ -67,7 +67,7 @@ const Navbar = () => {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.15 }}
-                  className="relative"
+                  className="relative group"
                 >
                   <a 
                     href={item.link} 
@@ -75,7 +75,18 @@ const Navbar = () => {
                       scrolled ? 'text-gray-300 hover:text-cyan-400' : 'text-white hover:text-cyan-300 drop-shadow-md'
                     }`}
                   >
+                    {/* LEFT BRACKET */}
+                    <span className="absolute -left-1 opacity-0 group-hover:opacity-100 group-hover:-left-4 transition-all duration-300 text-cyan-400">
+          [
+        </span>
+                   <span className="transition-all duration-300">
                     {item.name}
+                    </span>
+                    {/* RIGHT BRACKET */}
+                    <span className="absolute -right-1 opacity-0 group-hover:opacity-100 group-hover:-right-4 transition-all duration-300 text-cyan-400">
+          ]
+        </span>
+                    {/* Underline */}
                     <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-300 group-hover:w-full"></span>
                   </a>
                 </motion.li>
@@ -88,7 +99,7 @@ const Navbar = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.6 }}
-              className={`px-6 py-2.5 rounded-xl font-semibold transition-all duration-300 ${
+              className={` cursor-pointer px-6 py-2.5 rounded-xl font-semibold transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-0.5 ${
                 scrolled
                   ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg hover:shadow-cyan-500/25'
                   : 'bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-white/20 hover:shadow-2xl'
@@ -102,7 +113,7 @@ const Navbar = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.6 }}
-              className={`px-6 py-2.5 rounded-xl font-semibold transition-all duration-300 ${
+              className={`cursor-pointer px-6 py-2.5 rounded-xl font-semibold transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-0.5  ${
                 scrolled
                   ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg hover:shadow-cyan-500/25'
                   : 'bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-white/20 hover:shadow-2xl'

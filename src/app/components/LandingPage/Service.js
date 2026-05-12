@@ -93,16 +93,16 @@ const Services = () => {
                 visible: { opacity: 1, y: 0 },
               }}
               whileHover={{ y: -10, transition: { duration: 0.3 } }}
-              className="relative rounded-2xl overflow-hidden group h-80 border border-gray-200 bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
+              className="relative rounded-2xl overflow-hidden group h-80 border border-gray-200 bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 "
             >
               {/* Background Image */}
               <div
-                className="absolute inset-0 bg-cover bg-center transition-all duration-700 group-hover:scale-110"
+                className="absolute inset-0 bg-cover bg-center transition-all duration-700 group-hover:scale-110 hover:bg-black/70"
                 style={{ backgroundImage: `url(${service.image})` }}
               />
               
               {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent opacity-70 group-hover:opacity-80 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent opacity-70 group-hover:opacity-80 transition-opacity duration-300 hover:bg-black/70" />
               
               {/* Content */}
               <div className="relative z-10 flex flex-col justify-end h-full p-6">
@@ -164,7 +164,7 @@ const Services = () => {
                 visible: { opacity: 1, y: 0 },
               }}
               whileHover={{ y: -10, transition: { duration: 0.3 } }}
-              className="relative rounded-2xl overflow-hidden group h-80 border border-gray-200 bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
+              className="relative rounded-2xl overflow-hidden group h-80 border border-gray-200 bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-black/70"
             >
               {/* Background Image */}
               <div
@@ -222,7 +222,15 @@ const Services = () => {
             View All Services
           </button>
         </motion.div> */}
+
+        
       </div>
+
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent opacity-80 "></div>
+      
+      {/* Geometric pattern overlay */}
+      <div className="absolute inset-0 opacity-10 bg-geometric-pattern "></div>
     </section>
   );
 };
