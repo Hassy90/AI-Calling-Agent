@@ -16,15 +16,61 @@ export default function CalculatorSection() {
   const [numberType, setNumberType] = useState('neurovise');
   const [customizeVoice, setCustomizeVoice] = useState(false);
 
-  const pricing = useMemo(() => {
-    const safeMinutes = Number.isFinite(Number(monthlyMinutes)) ? Math.max(0, Number(monthlyMinutes)) : 0;
+const pricing = useMemo(() => {
+  const safeMinutes = Number.isFinite(Number(monthlyMinutes))
+    ? Math.max(0, Number(monthlyMinutes))
+    : 0;
 
-    const baseCost = safeMinutes * BASE_RATE;
-    const voiceCost = customizeVoice ? safeMinutes * VOICE_CUSTOMIZATION_RATE : 0;
-    const totalMonthlyCost = baseCost + voiceCost;
+  // BASE RATE
+  const baseRate =
+    numberType === 'neurovise'
+      ? BASE_RATE + 0.22
+      : BASE_RATE;
 
-    return { baseCost, voiceCost, totalMonthlyCost };
-  }, [monthlyMinutes, customizeVoice]);
+  // BASE COST
+  const baseCost = safeMinutes * baseRate;
+
+  // CUSTOM VOICE RATE
+  let voiceRate = 0;
+
+  if (customizeVoice) {
+    if (safeMinutes <= 60) {
+      voiceRate = 0.20;
+    } 
+    else if (safeMinutes <= 240) {
+      voiceRate = 0.18;
+    } 
+    else if (safeMinutes >= 241) {
+      voiceRate = 0.17;
+    } 
+    else {
+      voiceRate = 0.10;
+    }
+  }
+
+  // VOICE COST
+  const voiceCost = safeMinutes * voiceRate;
+
+  // FINAL RATE
+  const finalRate = baseRate + voiceRate;
+
+  // TOTAL MONTHLY COST
+  const totalMonthlyCost = baseCost + voiceCost;
+
+  const totalRatePerMinute = finalRate;
+
+  return {
+    baseRate,
+    baseCost,
+    voiceRate,
+    voiceCost,
+    finalRate,
+    totalRatePerMinute,
+    totalMonthlyCost,
+  };
+}, [monthlyMinutes, numberType, customizeVoice]);
+
+
 
   return (
     <section className="bg-white py-16 md:py-24">
@@ -67,7 +113,7 @@ export default function CalculatorSection() {
                         : 'border-gray-300 bg-white text-gray-700 hover:border-cyan-400'
                     }`}
                   >
-                    Provided by Neurovise Number
+                    Need a new contact number
                   </button>
                   <button
                     type="button"
@@ -78,7 +124,7 @@ export default function CalculatorSection() {
                         : 'border-gray-300 bg-white text-gray-700 hover:border-cyan-400'
                     }`}
                   >
-                    Use Your Own Number
+                    Use your existing company number
                   </button>
                 </div>
                 <p className="mt-2 text-xs text-gray-500">Phone number charges are billed separately based on your carrier</p>
@@ -101,15 +147,20 @@ export default function CalculatorSection() {
 
             <div className="mt-6 space-y-4">
               <div className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3">
-                <span className="text-sm font-medium text-gray-700">Base Cost (${BASE_RATE}/min)</span>
+                <span className="text-sm font-medium text-gray-700">Base Cost (${pricing.baseRate.toFixed(2)}/min)</span>
                 <span className="text-sm font-semibold text-gray-900">{formatUsd(pricing.baseCost)}</span>
               </div>
-              {customizeVoice && (
-                <div className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3">
-                  <span className="text-sm font-medium text-gray-700">Customize Voice (${VOICE_CUSTOMIZATION_RATE}/min)</span>
-                  <span className="text-sm font-semibold text-gray-900">{formatUsd(pricing.voiceCost)}</span>
-                </div>
-              )}
+             {customizeVoice && (
+             <div className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3">
+             <span className="text-sm font-medium text-gray-700">
+              Customize Voice (+${pricing.voiceRate.toFixed(2)}/min)
+             </span>
+
+             <span className="text-sm font-semibold text-gray-900">
+            {formatUsd(pricing.voiceCost)}
+              </span>
+            </div>
+             )}
             </div>
 
             <div className="mt-6 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-4 text-white shadow-lg">
@@ -129,6 +180,7 @@ export default function CalculatorSection() {
                     customizeVoice,
                     numberType,
                     totalCost: pricing.totalMonthlyCost,
+                    totalRatePerMinute: pricing.totalRatePerMinute,
                     timestamp: Date.now(), // Add timestamp to force updates
                   };
                   

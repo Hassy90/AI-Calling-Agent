@@ -7,7 +7,7 @@ const initialFormState = {
   email: '',
   date: '',
   time: '09:00',
-  timezone: 'Asia/Dubai',
+  timezone: 'America/New_York',
   message: '',
 };
 
@@ -102,6 +102,7 @@ export default function QuoteSection() {
 
     // Validate that we have valid minutes
     const noOfMins = calculatorData?.monthlyMinutes || 0;
+    const ratePerMinute = calculatorData?.totalRatePerMinute || 0;
     if (!noOfMins || noOfMins === 0) {
       setError('Please specify the number of monthly minutes needed.');
       setIsLoading(false);
@@ -145,6 +146,7 @@ export default function QuoteSection() {
         datetime: datetime,
         message: formData.message?.trim() || '', // Send as string, not array
         no_of_mins: String(noOfMins),
+         rate_per_minute: String(ratePerMinute),
       };
 
       // console.log('📤 Submitting quote request to API:', JSON.stringify(submissionData, null, 2));
@@ -163,6 +165,7 @@ export default function QuoteSection() {
         },
         body: JSON.stringify(submissionData),
       });
+      
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
