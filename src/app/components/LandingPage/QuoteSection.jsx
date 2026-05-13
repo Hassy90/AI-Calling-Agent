@@ -25,6 +25,12 @@ const timeOptions = [
 
 const timezoneOptions = ['Asia/Dubai', 'UTC', 'Europe/London', 'America/New_York', 'Asia/Kolkata'];
 
+const formatTimezone = (tz) => {
+  if (tz === 'UTC') return 'UTC';
+  const parts = tz.split('/');
+  return parts[1]?.replace(/_/g, ' ') || tz;
+};
+
 export default function QuoteSection() {
   const [formData, setFormData] = useState(initialFormState);
   const [calculatorData, setCalculatorData] = useState(null);
@@ -95,10 +101,47 @@ export default function QuoteSection() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const validateEmail = async (email) => {
+    try {
+      const response = await fetch(`/api/email-validation?email=${encodeURIComponent(email)}`);
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        return {
+          valid: false,
+          message: data.error || 'Email validation failed',
+        };
+      }
+
+      if (!data.is_valid) {
+        return {
+          valid: false,
+          message: data.reason || 'Email validation failed',
+        };
+      }
+
+      return { valid: true };
+    } catch (err) {
+      console.error('Email validation error:', err);
+      return {
+        valid: false,
+        message: 'Unable to validate email. Please check your email and try again.',
+      };
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+
+    // Validate email first
+    const emailValidation = await validateEmail(formData.email.trim());
+    if (!emailValidation.valid) {
+      setError('Please enter a valid email address.');
+      setIsLoading(false);
+      return;
+    }
 
     // Validate that we have valid minutes
     const noOfMins = calculatorData?.monthlyMinutes || 0;
@@ -331,7 +374,7 @@ export default function QuoteSection() {
                 >
                   {timezoneOptions.map((timezone) => (
                     <option key={timezone} value={timezone}>
-                      {timezone}
+                      {formatTimezone(timezone)}
                     </option>
                   ))}
                 </select>

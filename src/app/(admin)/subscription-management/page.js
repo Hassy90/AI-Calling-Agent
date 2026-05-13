@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import AdminLayout from '@/app/components/admin/AdminLayout';
 import CustomToast from '@/app/components/CustomToast';
 import MeetingPlanSection from '@/app/components/admin/subscription-management/MeetingPlanSection';
+import MinutesBalanceSection from '@/app/components/admin/subscription-management/MinutesBalanceSection';
 import RecentTransactionsSection from '@/app/components/admin/subscription-management/RecentTransactionsSection';
 
 // API calls go through Next.js routes to bypass CORS issues
@@ -16,6 +17,8 @@ export default function MeetingRatePage() {
   const [toast, setToast] = useState(null);
   const [userId, setUserId] = useState(null);
   const [transactions, setTransactions] = useState([]);
+  const [balance, setBalance] = useState(null);
+  const [showMeetingPlan, setShowMeetingPlan] = useState(false);
   // const [email, setEmail] = useState(null);
 
   const showToast = (message, type = 'success') => setToast({ message, type });
@@ -67,6 +70,21 @@ export default function MeetingRatePage() {
       } finally {
         setLoading(false);
       }
+
+      // Fetch minutes balance
+      try {
+        const res = await fetch(`/api/balance/${uid}`, {
+          method: 'GET',
+          headers: { accept: 'application/json' },
+        });
+
+        const data = await res.json();
+        if (data && data.success && data.data) {
+          setBalance(data.data);
+        }
+      } catch (err) {
+        console.error('fetchBalance error', err);
+      }
     };
 
     fetchRate();
@@ -83,7 +101,11 @@ export default function MeetingRatePage() {
           accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ amount, user_id: userId }),
+        body: JSON.stringify({
+          amount,
+          user_id: userId,
+          no_of_minutes: String(minutes ?? 0),
+        }),
       });
 
       const data = await res.json();
@@ -122,16 +144,38 @@ export default function MeetingRatePage() {
           </div>
         ) : (
           <div className="space-y-6">
-            {/* Meeting Plan Section */}
-            <MeetingPlanSection
-              minutes={minutes}
-              rate={rate}
-              amount={amount}
-              processing={processing}
-              onProceedToPayment={handleProceedToPayment}
-            />
+            {/* Minutes Summary / Meeting Plan Toggle Section */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {showMeetingPlan ? '' : ''}
+                </h2>
+                <button
+                  onClick={() => setShowMeetingPlan(!showMeetingPlan)}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 ${
+                    showMeetingPlan
+                      ? 'bg-cyan-600 text-white hover:bg-cyan-700'
+                      : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
+                  }`}
+                >
+                  {showMeetingPlan ? 'Back to Summary' : 'Show Meeting Plan'}
+                </button>
+              </div>
 
-            {/* Payment History Section */}
+              {!showMeetingPlan ? (
+                <MinutesBalanceSection balance={balance} />
+              ) : (
+                <MeetingPlanSection
+                  minutes={minutes}
+                  rate={rate}
+                  amount={amount}
+                  processing={processing}
+                  onProceedToPayment={handleProceedToPayment}
+                />
+              )}
+            </div>
+
+            {/* Recent Transactions Section */}
             <RecentTransactionsSection transactions={transactions} />
           </div>
         )}
