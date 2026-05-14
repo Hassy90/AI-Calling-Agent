@@ -7,7 +7,6 @@ const initialFormState = {
   email: '',
   date: '',
   time: '09:00',
-  timezone: 'America/New_York',
   message: '',
 };
 
@@ -22,14 +21,6 @@ const timeOptions = [
   '16:00',
   '17:00',
 ];
-
-const timezoneOptions = ['Asia/Dubai', 'UTC', 'Europe/London', 'America/New_York', 'Asia/Kolkata'];
-
-const formatTimezone = (tz) => {
-  if (tz === 'UTC') return 'UTC';
-  const parts = tz.split('/');
-  return parts[1]?.replace(/_/g, ' ') || tz;
-};
 
 export default function QuoteSection() {
   const [formData, setFormData] = useState(initialFormState);
@@ -359,22 +350,6 @@ export default function QuoteSection() {
                   {timeOptions.map((time) => (
                     <option key={time} value={time}>
                       {time}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="block md:col-span-1">
-                <span className="mb-2 block text-sm font-medium text-gray-200">Timezone *</span>
-                <select
-                  name="timezone"
-                  value={formData.timezone}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-white/20 bg-slate-800 px-4 py-2.5 text-white focus:border-cyan-400 focus:outline-none"
-                >
-                  {timezoneOptions.map((timezone) => (
-                    <option key={timezone} value={timezone}>
-                      {formatTimezone(timezone)}
                     </option>
                   ))}
                 </select>

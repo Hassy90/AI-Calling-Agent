@@ -3,7 +3,6 @@
 import { useMemo, useState } from 'react';
 
 const BASE_RATE = 0.10;
-const VOICE_CUSTOMIZATION_RATE = 0.05;
 
 const formatUsd = (amount) =>
   `$${amount.toLocaleString('en-US', {
@@ -13,7 +12,7 @@ const formatUsd = (amount) =>
 
 export default function CalculatorSection() {
   const [monthlyMinutes, setMonthlyMinutes] = useState(5000);
-  const [numberType, setNumberType] = useState('neurovise');
+  const [numberType, setNumberType] = useState('own');
   const [customizeVoice, setCustomizeVoice] = useState(false);
 
 const pricing = useMemo(() => {
@@ -106,6 +105,17 @@ const pricing = useMemo(() => {
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <button
                     type="button"
+                    onClick={() => setNumberType('own')}
+                    className={`rounded-lg border px-4 py-2.5 text-[13px] font-semibold transition ${
+                      numberType === 'own'
+                        ? 'border-cyan-500 bg-cyan-500 text-white'
+                        : 'border-gray-300 bg-white text-gray-700 hover:border-cyan-400'
+                    }`}
+                  >
+                    Use your existing company number
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => setNumberType('neurovise')}
                     className={`rounded-lg border px-4 py-2.5 text-sm font-semibold transition ${
                       numberType === 'neurovise'
@@ -115,30 +125,37 @@ const pricing = useMemo(() => {
                   >
                     Need a new contact number
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => setNumberType('own')}
-                    className={`rounded-lg border px-4 py-2.5 text-sm font-semibold transition ${
-                      numberType === 'own'
-                        ? 'border-cyan-500 bg-cyan-500 text-white'
-                        : 'border-gray-300 bg-white text-gray-700 hover:border-cyan-400'
-                    }`}
-                  >
-                    Use your existing company number
-                  </button>
                 </div>
                 <p className="mt-2 text-xs text-gray-500">Phone number charges are billed separately based on your carrier</p>
               </div>
 
-              <label className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  checked={customizeVoice}
-                  onChange={(e) => setCustomizeVoice(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-cyan-500 cursor-pointer"
-                />
-                <span className="text-sm font-medium text-gray-700">Need Customize Voice ? </span>
-              </label>
+              <div>
+                <p className="mb-2 text-sm font-medium text-gray-700">Voice Option</p>
+                <div className="grid grid-cols-2 rounded-lg border border-gray-300 bg-gray-100 p-1">
+                  <button
+                    type="button"
+                    onClick={() => setCustomizeVoice(false)}
+                    className={`rounded-md px-4 py-2.5 text-sm font-semibold transition ${
+                      !customizeVoice
+                        ? 'bg-cyan-500 text-white shadow-sm'
+                        : 'bg-transparent text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Default
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCustomizeVoice(true)}
+                    className={`rounded-md px-4 py-2.5 text-sm font-semibold transition ${
+                      customizeVoice
+                        ? 'bg-cyan-500 text-white shadow-sm'
+                        : 'bg-transparent text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Customize Voice
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -163,9 +180,11 @@ const pricing = useMemo(() => {
              )}
             </div>
 
-            <div className="mt-6 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-4 text-white shadow-lg">
-              <p className="text-sm">Total Monthly Cost</p>
-              <p className="mt-1 text-2xl font-bold">{formatUsd(pricing.totalMonthlyCost)}</p>
+            <div className="mt-6 rounded-xl border border-cyan-100 bg-cyan-50 px-5 py-4">
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-sm font-medium text-cyan-700">Total Monthly Cost</p>
+                <p className="text-2xl font-bold text-cyan-900">{formatUsd(pricing.totalMonthlyCost)}</p>
+              </div>
             </div>
 
             <button
@@ -196,7 +215,7 @@ const pricing = useMemo(() => {
                   quoteSection.scrollIntoView({ behavior: 'smooth' });
                 }
               }}
-              className="mt-4 w-full rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-cyan-600 transition hover:bg-gray-50"
+              className="mt-6 w-full rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-600 px-6 py-4 text-base font-bold text-white shadow-lg transition hover:from-cyan-400 hover:to-cyan-500"
             >
               Get a Quote
             </button>
