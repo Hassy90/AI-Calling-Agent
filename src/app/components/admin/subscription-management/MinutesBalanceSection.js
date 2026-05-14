@@ -44,12 +44,6 @@ export default function MinutesBalanceSection({ balance }) {
             <p className="text-lg font-bold text-amber-700">{is_expired ? 'Expired' : expiryText}</p>
           </div>
         </div>
-
-        {Number(remaining_minutes) < 50 && (
-          <div className="mt-4 bg-red-50 border border-red-200 text-red-700 p-3 rounded">
-            <p className="text-sm">Your remaining minutes are low. Please top up soon.</p>
-          </div>
-        )}
       </div>
     </div>
   );

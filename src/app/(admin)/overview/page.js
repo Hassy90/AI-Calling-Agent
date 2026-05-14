@@ -35,6 +35,7 @@ export default function OverviewPage() {
   const [error, setError] = useState(null);
   const [callsOverTimeData, setCallsOverTimeData] = useState([]);
   const [durationData, setDurationData] = useState([]);
+  const [balance, setBalance] = useState(null);
 
   // Calculate call distribution data based on real metrics
   const callDistributionData = [
@@ -228,7 +229,27 @@ export default function OverviewPage() {
       }
     };
 
+    const fetchBalance = async () => {
+      try {
+        const userId = localStorage.getItem('user_id') || "68bedea50a1f8b06e6dac22e";
+        if (!userId) return;
+
+        const res = await fetch(`/api/balance/${userId}`, {
+          method: 'GET',
+          headers: { accept: 'application/json' },
+        });
+
+        const data = await res.json();
+        if (data && data.success && data.data) {
+          setBalance(data.data);
+        }
+      } catch (err) {
+        console.error('fetchBalance error', err);
+      }
+    };
+
     fetchCallsSummary();
+    fetchBalance();
   }, []);
 
   // Calculate qualification rate (qualified calls / total calls)
@@ -298,6 +319,19 @@ export default function OverviewPage() {
               <span>Refresh Data</span>
             </button>
           </div>
+
+          {balance && balance.remaining_minutes <= 50 && (
+            <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start gap-3">
+              <div className="flex-shrink-0 pt-0.5">
+                <svg className="h-5 w-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-yellow-800">Your remaining minutes are low. Please top up soon.</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Loading State */}
