@@ -23,6 +23,7 @@ const navigation = [
   { name: 'Global Overview', href: '/global-overview', icon: Globe },
   { name: 'Products & Prompts', href: '/products-prompts', icon: FileText },
   { name: 'Numbers & Regions', href: '/numbers-regions', icon: MapPin },
+  { name: 'Global Subscription', href: '/global-subscriptions', icon: Globe },
  
 
   { name: 'Lead Activity Feed', href: '/lead-activity-feed', icon: Activity },
