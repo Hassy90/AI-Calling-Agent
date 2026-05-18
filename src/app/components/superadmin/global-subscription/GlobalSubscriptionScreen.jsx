@@ -253,7 +253,7 @@ export default function GlobalSubscriptionScreen() {
       </div>
 
       {/* BODY */}
-      <div className="p-8">
+      <div className="p-8 text-gray-800">
 
         <div className="space-y-5">
 
