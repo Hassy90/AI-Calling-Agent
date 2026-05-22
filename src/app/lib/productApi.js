@@ -50,9 +50,9 @@ export async function createProduct(productData) {
 /**
  * Get all products for a business/user
  */
-export async function getProducts(userId) {
+export async function getProducts() {
   try {
-    const response = await apiFetch(`/business/${userId}/products`);
+    const response = await apiFetch(`/business/products`);
 
     // console.log('Get products response status:', response.status);
     

@@ -7,14 +7,18 @@ export async function apiFetch(endpoint, options = {}) {
   try {
     // Check if body is FormData - don't set Content-Type header for FormData
     const isFormData = options.body instanceof FormData;
-    
+
+    const token = localStorage.getItem("token");
+
     const defaultHeaders = isFormData 
       ? {
           'ngrok-skip-browser-warning': '69420', // Skip ngrok browser warning
+          Authorization: `Bearer ${token}`,
         }
       : {
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': '69420', // Skip ngrok browser warning
+          'ngrok-skip-browser-warning': '69420',
+          Authorization: `Bearer ${token}`,      // Skip ngrok browser warning
         };
     
     // If headers is explicitly undefined (for FormData), use only default non-Content-Type headers
