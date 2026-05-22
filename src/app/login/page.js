@@ -6,9 +6,11 @@ import { useRouter } from 'next/navigation';
 import { loginUser } from '../lib/loginHandler';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 
 export default function LoginUI() {
   const router = useRouter();
+  const { login } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -30,77 +32,48 @@ export default function LoginUI() {
     }
   }, []);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+ const handleLogin = async (e) => {
+  e.preventDefault();
+  setError("");
+  setLoading(true);
 
-    const result = await loginUser({ username: email, password });
-    // console.log(':white_check_mark: Login result:', result);
+  const result = await loginUser({ username: email, password });
+   console.log("LOGIN API RESULT:", result);
+  if (result.success) {
 
-    if (result.success) {
-      // Handle Remember Me functionality
-      if (rememberMe) {
-        localStorage.setItem('rememberedEmail', email);
-        localStorage.setItem('rememberMe', 'true');
-      } else {
-        localStorage.removeItem('rememberedEmail');
-        localStorage.removeItem('rememberMe');
-      }
-
-      // Store user_id and role in localStorage
-      if (result.user_id) {
-        localStorage.setItem('user_id', result.user_id);
-      }
-      
-      if (result.role) {
-        localStorage.setItem('role', result.role);
-      }
-
-        if (result.isSubscribed) {
-        localStorage.setItem('isSubscribed', result.isSubscribed);
-
-      }
-
-      // Store subscription status
-      if (typeof result.isSubscribed !== 'undefined') {
-        localStorage.setItem('isSubscribed', result.isSubscribed.toString());
-      }
-
-       if (result.subscriptionTier) {
-          localStorage.setItem('subscriptionTier', result.subscriptionTier);
-        }
-
-      if (typeof window !== 'undefined') {
-        const storedName = localStorage.getItem('userFullName');
-        
-        if (!storedName) {
-          const emailName = email.split('@')[0];
-          const formattedName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
-          localStorage.setItem('userFullName', formattedName);
-        } else {
-        }
-      }
-
-      // Redirect based on role
-      const role = (result.role || localStorage.getItem('role') || '').toLowerCase();
-      if (role === 'admin') {
-        // SuperAdmin - redirect to global overview
-        router.push('/global-overview');
-      } else if (role === 'user') {
-        // Business user - redirect to overview dashboard
-        router.push('/overview');
-      } else {
-        // Fallback for any other role
-        router.push('/HomePage');
-      }
+    // remember email only (OK)
+    if (rememberMe) {
+      localStorage.setItem("rememberedEmail", email);
+      localStorage.setItem("rememberMe", "true");
     } else {
-      console.error(':x: Error during login:', result.error);
-      setError(result.error);
+      localStorage.removeItem("rememberedEmail");
+      localStorage.removeItem("rememberMe");
     }
 
-    setLoading(false);
-  };
+    // 🔥 CONTEXT LOGIN ONLY
+    login({
+      token: result.token,
+      role: result.role || "",
+      user_id: result.user_id || "",
+    });
+
+    // redirect
+    const role = (result.role || "").toLowerCase();
+
+    if (role === "admin") {
+      router.push("/global-overview");
+    } else if (role === "user") {
+      router.push("/overview");
+    } else {
+      router.push("/HomePage");
+    }
+
+  } else {
+    setError(result.error);
+  }
+
+  setLoading(false);
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-500 via-blue-400 to-cyan-400 flex">

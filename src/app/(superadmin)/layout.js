@@ -2,35 +2,35 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SuperAdminRootLayout({ children }) {
   const router = useRouter();
+  const { role, token, loading } = useAuth();
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    const role = localStorage.getItem("role");
+    if (loading) return;
 
-    // If no token -> go login
+    // Not logged in
     if (!token) {
       router.replace("/login");
       return;
     }
 
-    // Only admin can access superadmin pages
-    if (role !== "admin") {
+    // Not super admin
+    if (!role || role.toLowerCase() !== "admin") {
       router.replace("/login");
       return;
     }
 
     setChecking(false);
-  }, [router]);
+  }, [role, token, loading]);
 
-  // Loading screen while checking auth
-  if (checking) {
+  if (checking || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div>Checking SuperAdmin Access...</div>
+        Checking SuperAdmin Access...
       </div>
     );
   }

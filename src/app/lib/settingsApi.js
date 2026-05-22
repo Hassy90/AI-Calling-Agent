@@ -44,21 +44,18 @@ const parseJsonResponse = async (response, operationName) => {
 /*
     GET: Business Profile
 */
+
 export const getBusinessProfile = async () => {
   try {
-    const userId = getUserId();
-    if (!userId) {
-      throw new Error('User ID not found');
-    }
+    const url = `${API_BASE_URL}/api/settings/business-profile`;
 
-    const url = `${API_BASE_URL}/api/settings/business-profile/${userId}`;
     // console.log('[getBusinessProfile] Request URL:', url);
 
     const response = await fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': 'true', // Skip ngrok warning page
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 
@@ -198,11 +195,6 @@ export const getCallScheduling = async () => {
 */
 export const updateCallSchedulingRegion = async (regionId, regionData) => {
   try {
-    const userId = getUserId();
-    if (!userId) {
-      throw new Error('User ID not found');
-    }
-
     if (!regionId) {
       throw new Error('Region ID is required');
     }
@@ -220,14 +212,15 @@ export const updateCallSchedulingRegion = async (regionId, regionData) => {
     };
 
     // console.log('Updating region:', regionId, 'with data:', JSON.stringify(payload, null, 2));
-    const url = `${API_BASE_URL}/api/settings/update_call_scheduling/${userId}/region/${regionId}`;
+    const url = `${API_BASE_URL}/api/settings/update_call_scheduling/region/${regionId}`;
     // console.log('Update URL:', url);
 
     const response = await fetch(url, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
-      },
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+       },
       body: JSON.stringify(payload),
     });
 
@@ -253,23 +246,20 @@ export const updateCallSchedulingRegion = async (regionId, regionData) => {
 */
 export const deleteCallSchedulingRegion = async (regionId) => {
   try {
-    const userId = getUserId();
-    if (!userId) {
-      throw new Error('User ID not found');
-    }
 
     if (!regionId) {
       throw new Error('Region ID is required');
     }
 
     // console.log('Deleting region:', regionId, 'for business:', userId);
-    const url = `${API_BASE_URL}/api/settings/delete_call_scheduling/${userId}/region/${regionId}`;
+    const url = `${API_BASE_URL}/api/settings/delete_call_scheduling/region/${regionId}`;
     // console.log('Delete URL:', url);
 
     const response = await fetch(url, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
       },
     });
 
@@ -337,13 +327,7 @@ export const saveRecordingRetention = async (retentionData) => {
 */
 export const getRecordingRetention = async () => {
   try {
-    const userId = getUserId();
-    if (!userId) {
-      throw new Error('User ID not found');
-    }
-
-    const url = `${API_BASE_URL}/api/settings/business/${userId}/settings/recording-retention`;
-    // console.log('[getRecordingRetention] Request URL:', url);
+    const url = `${API_BASE_URL}/api/settings/business/settings/recording-retention`;
 
     const response = await fetch(url, {
       method: 'GET',
@@ -355,7 +339,6 @@ export const getRecordingRetention = async () => {
 
     return await parseJsonResponse(response, 'getRecordingRetention');
   } catch (error) {
-    // console.error('[getRecordingRetention] Error:', error.message);
     throw error;
   }
 };
@@ -367,12 +350,8 @@ export const getRecordingRetention = async () => {
 // GET: Consent Policy
 export const getConsentPolicy = async () => {
   try {
-    const userId = getUserId();
-    if (!userId) {
-      throw new Error('User ID not found');
-    }
 
-    const url = `${API_BASE_URL}/api/settings/business/${userId}/consent-policy`;
+    const url = `${API_BASE_URL}/api/settings/business/consent-policy`;
     // console.log('[getConsentPolicy] Request URL:', url);
 
     const response = await fetch(url, {
