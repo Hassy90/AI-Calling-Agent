@@ -246,11 +246,15 @@ export const callAPI = {
   // End a call
   async endCall(callId) {
     try {
-      
+       const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication token not found. Please log in again.');
+      }
       const response = await apiFetch(`/api/calls/end/${callId}`, {
         method: 'POST',
         headers: {
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`
         }
       });
       
@@ -269,12 +273,19 @@ export const callAPI = {
   // Update call status
   async updateCallStatus(callId, status, duration = null) {
     try {
-      
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication token not found. Please log in again.');
+      }
       const response = await apiFetch(`/api/calls/status`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`
+          
+          
+          
         },
         body: JSON.stringify({
           call_id: callId,

@@ -657,17 +657,18 @@ export const deleteClonedVoice = async () => {
 */
 export const getCustomVoicePreference = async () => {
   try {
-    const userId = getUserId();
-    if (!userId) {
-      throw new Error('User ID not found');
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
     }
 
-    const url = `${API_BASE_URL}/api/calls/settings/custom-voice?user_id=${userId}`;
+    const url = `${API_BASE_URL}/api/calls/settings/custom-voice`;
     const response = await fetch(url, {
       method: 'GET',
       headers: {
         'accept': 'application/json',
         'ngrok-skip-browser-warning': 'true',
+        'Authorization': `Bearer ${token}`,
       },
     });
 
@@ -683,9 +684,9 @@ export const getCustomVoicePreference = async () => {
 */
 export const updateCustomVoicePreference = async (customVoice) => {
   try {
-    const userId = getUserId();
-    if (!userId) {
-      throw new Error('User ID not found');
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
     }
 
     const response = await fetch(`${API_BASE_URL}/api/calls/settings/custom-voice`, {
@@ -694,9 +695,9 @@ export const updateCustomVoicePreference = async (customVoice) => {
         'accept': 'application/json',
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({
-        user_id: userId,
         custom_voice: customVoice,
       }),
     });

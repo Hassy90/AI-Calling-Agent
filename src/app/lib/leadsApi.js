@@ -95,10 +95,19 @@ export async function addPromptToLead(productId, leadId) {
 /**
  * Get calls by user with date range for CSV export
  */
-export async function getCallsByUser(userId, startDate, endDate) {
+export async function getCallsByUser(startDate, endDate) {
   try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
+    }
     const response = await apiFetchLeads(
-      `/api/calls/by-user/${userId}?start_date=${startDate}&end_date=${endDate}`
+      `/api/calls/by-user?start_date=${startDate}&end_date=${endDate}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
     );
 
     if (!response.ok) {
