@@ -39,11 +39,11 @@ export default function AnalyticsPage() {
         setLoading(true);
         setError(null);
 
-        const role = localStorage.getItem('role') || 'superadmin';
-        const token = localStorage.getItem('access_token');
+        
+        const token = localStorage.getItem('token');
 
         // Fetch global overview data
-        const globalUrl = getApiUrl(`/super_admin/global-overview/${role}`);
+        const globalUrl = getApiUrl(`/super_admin/global-overview`);
         const globalResponse = await fetch(globalUrl, {
           headers: {
             'ngrok-skip-browser-warning': 'true',

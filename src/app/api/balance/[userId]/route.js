@@ -1,22 +1,33 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function GET(request, { params }) {
+export async function GET(request) {
   try {
-    const resolvedParams = await params;
-    const { userId } = resolvedParams;
-    if (!userId) {
-      return Response.json({ success: false, error: 'userId is required' }, { status: 400 });
-    }
+    const authHeader = request.headers.get('authorization');
 
-    const res = await fetch(`${BASE_URL}/api/balance/${userId}`, {
+    const res = await fetch(`${BASE_URL}/api/balance`, {
       method: 'GET',
-      headers: { accept: 'application/json' },
+      headers: {
+        accept: 'application/json',
+        ...(authHeader ? { Authorization: authHeader } : {}),
+      },
     });
 
     const data = await res.json();
-    return Response.json(data);
+
+    return Response.json(data, {
+      status: res.status,
+    });
   } catch (error) {
     console.error('Balance proxy error:', error);
-    return Response.json({ success: false, error: error.message }, { status: 500 });
+
+    return Response.json(
+      {
+        success: false,
+        error: error.message,
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }

@@ -30,9 +30,20 @@ export async function apiFetchLeads(endpoint, options = {}) {
 /**
  * Get all leads for a user
  */
-export async function getLeads(userId, page = 1, limit = 10) {
+export async function getLeads( page = 1, limit = 10) {
   try {
-    const response = await apiFetchLeads(`/dynamics/leads/${userId}?page=${page}&limit=${limit}`);
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
+    }
+    const response = await apiFetchLeads(`/dynamics/leads?page=${page}&limit=${limit}`
+      , {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
 
     if (!response.ok) {
       const error = await response.json();
@@ -125,19 +136,25 @@ export async function getCallsByUser(startDate, endDate) {
 /**
  * Upload CSV file with leads
  */
-export async function uploadLeadsCSV(file, userId) {
+export async function uploadLeadsCSV(file) {
   try {
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
+    }
+
     const formData = new FormData();
     formData.append('file', file);
     
     // Add userId as a query parameter or in the form data if needed
-    const url = `${BASE_URL}/dynamics/leads/upload-csv${userId ? `?user_id=${userId}` : ''}`;
+    const url = `${BASE_URL}/dynamics/leads/upload-csv`;
     
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'ngrok-skip-browser-warning': 'true',
-        // Don't set Content-Type header - browser will set it automatically with boundary
+        'Authorization': `Bearer ${token}`
       },
       body: formData,
     });

@@ -28,6 +28,7 @@ export default function ProductsPromptsPage() {
       // console.log('Fetching from:', apiUrl);
       
       const response = await fetch(apiUrl, {
+        method: 'GET',
         headers: {
           'ngrok-skip-browser-warning': 'true',
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`,

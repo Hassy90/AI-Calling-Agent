@@ -51,18 +51,16 @@ export default function LoginUI() {
       localStorage.removeItem("rememberMe");
     }
 
-    // 🔥 CONTEXT LOGIN ONLY
-    login({
-      token: result.token,
-      role: result.role || "",
-      user_id: result.user_id || "",
-    });
-
-    // redirect
-    const role = (result.role || "").toLowerCase();
-
     const decodedToken = jwtDecode(result.token);
-    console.log("Decoded JWT:", decodedToken);
+    console.log("DECODED TOKEN:", decodedToken);
+
+     const role = (decodedToken.role || "").toLowerCase();
+     
+
+      login({
+    token: result.token,
+    role,
+    });
 
     if (role === "admin") {
       router.push("/global-overview");

@@ -4,6 +4,9 @@
 export async function getPlans() {
   try {
     const token = localStorage.getItem('access_token');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
+    }
     
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/plans`, {
       method: 'GET',
@@ -29,10 +32,13 @@ export async function getPlans() {
 /**
  * Subscribe to a plan
  */
-export async function subscribeToPlan(userId, planId) {
+export async function subscribeToPlan(planId) {
   try {
     const token = localStorage.getItem('access_token');
-    
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
+    }
+
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/subscribe`, {
       method: 'POST',
       headers: {
@@ -41,7 +47,6 @@ export async function subscribeToPlan(userId, planId) {
         'ngrok-skip-browser-warning': '69420',
       },
       body: JSON.stringify({
-        user_id: userId,
         plan_id: planId,
       }),
     });
@@ -62,11 +67,14 @@ export async function subscribeToPlan(userId, planId) {
 /**
  * Get user's subscription by user_id
  */
-export async function getUserSubscriptionById(userId) {
+export async function getUserSubscriptionById() {
   try {
     const token = localStorage.getItem('access_token');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
+    }
     
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/subscription/${userId}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/subscription`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,

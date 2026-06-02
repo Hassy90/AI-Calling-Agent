@@ -231,12 +231,18 @@ export default function OverviewPage() {
 
     const fetchBalance = async () => {
       try {
-        const userId = localStorage.getItem('user_id') || "68bedea50a1f8b06e6dac22e";
-        if (!userId) return;
+       const token = localStorage.getItem('token');
+        if (!token) {
+        setError('Authentication token not found');
+        return;
+      }
 
-        const res = await fetch(`/api/balance/${userId}`, {
+        const res = await fetch(`/api/balance`, {
           method: 'GET',
-          headers: { accept: 'application/json' },
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         const data = await res.json();

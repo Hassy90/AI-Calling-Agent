@@ -3,12 +3,15 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 // GET GLOBAL PRICING
 export const getGlobalPricing = async () => {
   try {
+    const token = localStorage.getItem('access_token');
     const response = await fetch(
       `${BASE_URL}/super_admin/global-pricing`,
       {
         method: "GET",
         headers: {
           accept: "application/json",
+          "ngrok-skip-browser-warning": "true",
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -25,6 +28,8 @@ export const getGlobalPricing = async () => {
 // UPDATE GLOBAL PRICING
 export const updateGlobalPricing = async (payload) => {
   try {
+        const token = localStorage.getItem('access_token');
+
     const response = await fetch(
       `${BASE_URL}/super_admin/global-pricing`,
       {
@@ -32,6 +37,8 @@ export const updateGlobalPricing = async (payload) => {
         headers: {
           "Content-Type": "application/json",
           accept: "application/json",
+          "ngrok-skip-browser-warning": "true",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       }
