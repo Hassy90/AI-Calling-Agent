@@ -10,7 +10,6 @@ const EXPIRY_TIME = 24 * 60 * 60 * 1000;
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [role, setRole] = useState(null);
-  const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // =========================
@@ -24,12 +23,11 @@ export function AuthProvider({ children }) {
 
     setToken(data.token);
     setRole(data.role);
-    setUserId(data.user_id);
 
     // save to localStorage
     localStorage.setItem("token", data.token);
     localStorage.setItem("role", data.role);
-    localStorage.setItem("user_id", data.user_id);
+  
 
     // expiry time store
     localStorage.setItem("login_time", now);
@@ -41,11 +39,10 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setToken(null);
     setRole(null);
-    setUserId(null);
+    
 
     localStorage.removeItem("token");
     localStorage.removeItem("role");
-    localStorage.removeItem("user_id");
     localStorage.removeItem("login_time");
   };
 
@@ -55,7 +52,6 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     const savedRole = localStorage.getItem("role");
-    const savedUserId = localStorage.getItem("user_id");
     const loginTime = localStorage.getItem("login_time");
 
     const now = Date.now();
@@ -66,18 +62,15 @@ export function AuthProvider({ children }) {
      if (isExpired) {
      localStorage.removeItem("token");
      localStorage.removeItem("role");
-     localStorage.removeItem("user_id");
      localStorage.removeItem("login_time");
 
   setToken(null);
   setRole(null);
-  setUserId(null);
 
       } else {
         // restore session
         setToken(savedToken);
         setRole(savedRole);
-        setUserId(savedUserId);
       }
     }
 
@@ -89,7 +82,6 @@ export function AuthProvider({ children }) {
       value={{
         token,
         role,
-        userId,
         login,
         logout,
         loading,

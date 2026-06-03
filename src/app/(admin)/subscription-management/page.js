@@ -24,22 +24,21 @@ export default function MeetingRatePage() {
   const showToast = (message, type = 'success') => setToast({ message, type });
 
   useEffect(() => {
-    const uid = localStorage.getItem('user_id');
-    // const mail = localStorage.getItem('email');
-    setUserId(uid);
-    // setEmail(mail);
-
-    if (!uid) {
+    const token = localStorage.getItem('token');
+    if (!token) {
       setLoading(false);
       return;
     }
+    
 
     const fetchRate = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/meeting-rate?user_id=${uid}`, {
+        const res = await fetch(`/api/meeting-rate`, {
           method: 'GET',
-          headers: { accept: 'application/json' },
+          headers: { accept: 'application/json',
+              Authorization: `Bearer ${token}`
+           },
         });
 
         const data = await res.json();
@@ -56,9 +55,11 @@ export default function MeetingRatePage() {
 
       // Also fetch transactions (always)
       try {
-        const res = await fetch(`/api/transactions/${uid}`, {
+        const res = await fetch(`/api/transactions`, {
           method: 'GET',
-          headers: { accept: 'application/json' },
+          headers: { accept: 'application/json',
+              Authorization: `Bearer ${token}`
+           },
         });
 
         const data = await res.json();
@@ -73,9 +74,11 @@ export default function MeetingRatePage() {
 
       // Fetch minutes balance
       try {
-        const res = await fetch(`/api/balance/${uid}`, {
+        const res = await fetch(`/api/balance`, {
           method: 'GET',
-          headers: { accept: 'application/json' },
+          headers: { accept: 'application/json',
+              Authorization: `Bearer ${token}`
+           },
         });
 
         const data = await res.json();
@@ -95,18 +98,23 @@ export default function MeetingRatePage() {
   const handleProceedToPayment = async () => {
     setProcessing(true);
     try {
+
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        throw new Error('Authentication token not found. Please log in again.');
+      }
       const res = await fetch(`/api/create-checkout-session`, {
         method: 'POST',
         headers: {
           accept: 'application/json',
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          amount,
-          user_id: userId,
-          no_of_minutes: String(minutes ?? 0),
-        }),
-      });
+          body: JSON.stringify({
+        amount,
+        no_of_minutes: String(minutes ?? 0),
+      }),
+    });
 
       const data = await res.json();
       if (data && data.success && data.checkout_url) {

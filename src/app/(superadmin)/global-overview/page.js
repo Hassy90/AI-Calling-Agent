@@ -39,18 +39,16 @@ export default function GlobalOverviewPage() {
       try {
         setLoading(true);
         setError(null);
-
-        // Get role from localStorage
-        const role = localStorage.getItem('role') || 'superadmin';
+      
 
         // Make API call to get global overview
-        const apiUrl = getApiUrl(`/super_admin/global-overview/${role}`);
+        const apiUrl = getApiUrl(`/super_admin/global-overview`);
         // console.log('Fetching from:', apiUrl);
         
         const response = await fetch(apiUrl, {
           headers: {
             'ngrok-skip-browser-warning': 'true',
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
           }
         });
 

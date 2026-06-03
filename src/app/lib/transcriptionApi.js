@@ -24,10 +24,19 @@ export async function apiFetch(endpoint, options = {}) {
  * @param {string} userId - The user ID from localStorage
  * @returns {Promise} - Response with list of chat histories
  */
-export async function getAllChatHistories(userId) {
+export async function getAllChatHistories() {
   try {
-    const response = await apiFetch(`/conversation/user/${userId}`, {
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
+    }
+
+    const response = await apiFetch(`/conversation/user`, {
       method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     });
 
     if (!response.ok) {

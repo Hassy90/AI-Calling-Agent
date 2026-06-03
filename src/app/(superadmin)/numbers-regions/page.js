@@ -28,7 +28,7 @@ export default function NumbersRegionsPage() {
         const response = await fetch(apiUrl, {
           headers: {
             'ngrok-skip-browser-warning': 'true',
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
           }
         });
 

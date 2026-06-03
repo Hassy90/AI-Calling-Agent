@@ -41,11 +41,11 @@ export default function TranscriptionHistory() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const fetchChatHistories = async (userId) => {
+  const fetchChatHistories = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getAllChatHistories(userId);
+      const data = await getAllChatHistories();
       // Map the API response to match our component structure
       const mappedConversations = data.conversations.map(conv => ({
         call_id: conv._id,

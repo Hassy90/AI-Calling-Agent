@@ -51,21 +51,21 @@ export default function OverviewPage() {
         setLoading(true);
         setError(null);
 
-        // Get user_id from localStorage
-        const userId = localStorage.getItem('user_id') || "68bedea50a1f8b06e6dac22e"; // Fallback for testing
-        // console.log('User ID:', userId); // Debug log
-        if (!userId) {
-          setError('User ID not found. Please log in again.');
-          setLoading(false);
-          return;
-        }
+        const token = localStorage.getItem('token');
+        if (!token) {
+        setError('Authentication token not found');
+        setLoading(false);
+        return;
+      }
 
         // Make API call
-        const apiUrl = getApiUrl(`/api/calls/user-calls-summary?user_id=${userId}`);
+        const apiUrl = getApiUrl(`/api/calls/user-calls-summary`);
         // console.log('Fetching from:', apiUrl); // Debug log
         const response = await fetch(apiUrl, {
+          method: 'GET',
           headers: {
-            'ngrok-skip-browser-warning': 'true', 
+            'ngrok-skip-browser-warning': 'true',
+            'Authorization': `Bearer ${token}`,
           }
         });
 
@@ -231,12 +231,18 @@ export default function OverviewPage() {
 
     const fetchBalance = async () => {
       try {
-        const userId = localStorage.getItem('user_id') || "68bedea50a1f8b06e6dac22e";
-        if (!userId) return;
+       const token = localStorage.getItem('token');
+        if (!token) {
+        setError('Authentication token not found');
+        return;
+      }
 
-        const res = await fetch(`/api/balance/${userId}`, {
+        const res = await fetch(`/api/balance`, {
           method: 'GET',
-          headers: { accept: 'application/json' },
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         const data = await res.json();

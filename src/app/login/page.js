@@ -7,6 +7,7 @@ import { loginUser } from '../lib/loginHandler';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { jwtDecode } from 'jwt-decode';
 
 export default function LoginUI() {
   const router = useRouter();
@@ -50,15 +51,16 @@ export default function LoginUI() {
       localStorage.removeItem("rememberMe");
     }
 
-    // 🔥 CONTEXT LOGIN ONLY
-    login({
-      token: result.token,
-      role: result.role || "",
-      user_id: result.user_id || "",
-    });
+    const decodedToken = jwtDecode(result.token);
+    console.log("DECODED TOKEN:", decodedToken);
 
-    // redirect
-    const role = (result.role || "").toLowerCase();
+     const role = (decodedToken.role || "").toLowerCase();
+     
+
+      login({
+    token: result.token,
+    role,
+    });
 
     if (role === "admin") {
       router.push("/global-overview");
