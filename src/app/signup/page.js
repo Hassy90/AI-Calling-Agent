@@ -95,12 +95,15 @@ export default function SignupPage() {
        
       }
 
+      const token = localStorage.getItem('access_token');
       // Auto-login the user after signup
       const loginRes = await apiFetch("/api/auth/login", {
         method: "POST",
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: new URLSearchParams({
           grant_type: 'password',

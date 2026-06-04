@@ -18,7 +18,6 @@ export default function MeetingRatePage() {
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [toast, setToast] = useState(null);
-  const [userId, setUserId] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [balance, setBalance] = useState(null);
   const [showMeetingPlan, setShowMeetingPlan] = useState(false);
@@ -27,7 +26,7 @@ export default function MeetingRatePage() {
   const showToast = (message, type = 'success') => setToast({ message, type });
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token');
     if (!token) {
       setLoading(false);
       return;
@@ -162,10 +161,12 @@ export default function MeetingRatePage() {
           <div className="flex items-center justify-center h-32">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-600" />
           </div>
-        ) : !userId ? (
-          <div className="max-w-xl bg-white rounded-xl shadow p-6">
-            <p className="text-sm text-gray-700">Please login to view your subscription information.</p>
-          </div>
+        ) : !localStorage.getItem('access_token') ? (
+       <div className="max-w-xl bg-white rounded-xl shadow p-6">
+       <p className="text-sm text-gray-700">
+      Please login to view your subscription information.
+      </p>
+      </div>
         ) : (
           <div className="space-y-6">
             {/* Minutes Summary / Meeting Plan Toggle Section */}

@@ -33,11 +33,15 @@ export async function loginUser({ username, password }) {
     body.append("client_id", "string");
     body.append("client_secret", "string");
 
+    const token = localStorage.getItem('access_token');
+
     const response = await apiFetch("/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         Accept: "application/json",
+        'ngrok-skip-browser-warning': 'true',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: body.toString(),
     });
