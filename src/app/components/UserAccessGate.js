@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function UserAccessGate({ children }) {
   const router = useRouter();
@@ -9,33 +10,37 @@ export default function UserAccessGate({ children }) {
   const searchParams = useSearchParams();
   const [checking, setChecking] = useState(true);
 
-  useEffect(() => {
-    let mounted = true;
-    // Allow direct call -> conversation navigation without auth blocking
-    const isConversation = pathname?.toLowerCase().includes("/conversation");
-    const hasCallId = !!searchParams?.get("call_id");
-    if (isConversation && hasCallId) {
-      if (mounted) setChecking(false);
-      return () => {
-        mounted = false;
-      };
-    }
+  const { role, loading } = useAuth();
 
-    // Role-based gating: only check localStorage AFTER login has stored it.
-    // If missing, don't block or redirect; render children.
-    const storedRole = typeof window !== "undefined" ? localStorage.getItem("role") : null;
-    if (storedRole && storedRole.toLowerCase() === "admin") {
-      router.replace("/dashboard");
-      return () => {
-        mounted = false;
-      };
-    }
+ useEffect(() => {
+  let mounted = true;
 
+  if (loading) return;
+
+  // Allow direct call -> conversation navigation without auth blocking
+  const isConversation = pathname?.toLowerCase().includes("/conversation");
+  const hasCallId = !!searchParams?.get("call_id");
+
+  if (isConversation && hasCallId) {
     if (mounted) setChecking(false);
     return () => {
       mounted = false;
     };
-  }, [router, pathname, searchParams]);
+  }
+
+  if (role && role.toLowerCase() === "admin") {
+    router.replace("/dashboard");
+    return () => {
+      mounted = false;
+    };
+  }
+
+  if (mounted) setChecking(false);
+
+  return () => {
+    mounted = false;
+  };
+}, [role, loading, router, pathname, searchParams]);
 
   if (checking) {
     return (
