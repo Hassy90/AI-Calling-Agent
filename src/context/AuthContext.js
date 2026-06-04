@@ -19,8 +19,10 @@ export function AuthProvider({ children }) {
     const now = Date.now();
 
     setToken(data.token);
+    setRole(data.role);
 
     localStorage.setItem("token", data.token);
+    if (data.role) localStorage.setItem("role", data.role);
     localStorage.setItem("login_time", now);
   };
 
@@ -32,6 +34,7 @@ export function AuthProvider({ children }) {
     setRole(null);
 
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
     localStorage.removeItem("login_time");
   };
 
@@ -79,6 +82,9 @@ export function AuthProvider({ children }) {
        
 
         setRole(data.role);
+        if (data.role) {
+          localStorage.setItem("role", data.role);
+        }
       } catch (err) {
         console.error("AUTH RESTORE ERROR:", err);
         logout();
