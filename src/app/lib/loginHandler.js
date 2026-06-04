@@ -58,20 +58,7 @@ export async function loginUser({ username, password }) {
       // Store token
       localStorage.setItem("access_token", data.access_token);
 
-      // Extract user_id from token or use from response
-      let userId = data.user_id; // First try to get from response
-
-      if (!userId) {
-        // If not in response, extract from JWT token
-        userId = getUserIdFromToken(data.access_token);
-      }
-
-      if (userId) {
-        localStorage.setItem("user_id", userId);
-        // console.log("✅ Extracted and stored user_id:", userId);
-      } else {
-        console.warn("⚠️ user_id not found in token or response");
-      }
+     
 
       // Store subscription status from backend
       if (typeof data.isSubscribed !== "undefined") {
@@ -89,10 +76,7 @@ export async function loginUser({ username, password }) {
       }
     }
 
-    // If backend includes role in login response, persist it for client logic
-    if (data.role) {
-      localStorage.setItem("role", data.role);
-    }
+   
 
     return {
       success: true,

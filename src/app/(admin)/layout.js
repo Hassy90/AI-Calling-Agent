@@ -21,7 +21,7 @@ export default function AdminLayout({ children }) {
     // ❌ Role missing or invalid
     const r = (role || "").toLowerCase();
 
-    if (r !== "admin" && r !== "user") {
+    if ( r !=="admin" && r !== "user") {
       router.replace("/HomePage");
       return;
     }

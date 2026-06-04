@@ -19,6 +19,7 @@ export function AuthProvider({ children }) {
     const now = Date.now();
 
     setToken(data.token);
+    setRole(data.role);
 
     localStorage.setItem("token", data.token);
     localStorage.setItem("login_time", now);
