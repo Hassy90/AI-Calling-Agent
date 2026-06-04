@@ -47,6 +47,10 @@ const parseJsonResponse = async (response, operationName) => {
 
 export const getBusinessProfile = async () => {
   try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
+    }
     const url = `${API_BASE_URL}/api/settings/business-profile`;
 
     // console.log('[getBusinessProfile] Request URL:', url);
@@ -56,6 +60,7 @@ export const getBusinessProfile = async () => {
       headers: {
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
+        'Authorization': `Bearer ${token}`
       },
     });
 
@@ -164,12 +169,12 @@ export const saveCallScheduling = async (schedulingData) => {
 */
 export const getCallScheduling = async () => {
   try {
-    const userId = getUserId();
-    if (!userId) {
-      throw new Error('User ID not found');
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
     }
 
-    const url = `${API_BASE_URL}/api/settings/get_call_schedulings?user_id=${userId}`;
+    const url = `${API_BASE_URL}/api/settings/get_call_schedulings`;
     // console.log('[getCallScheduling] Request URL:', url);
 
     const response = await fetch(url, {
@@ -177,6 +182,7 @@ export const getCallScheduling = async () => {
       headers: {
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true', // Skip ngrok warning page
+        'Authorization': `Bearer ${token}`
       },
     });
 
@@ -297,11 +303,15 @@ export const saveRecordingRetention = async (retentionData) => {
     };
 
     // console.log('Saving recording retention:', JSON.stringify(payload, null, 2));
-
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
+    }
     const response = await fetch(`${API_BASE_URL}/api/settings/recording-retention`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify(payload),
     });
@@ -327,12 +337,17 @@ export const saveRecordingRetention = async (retentionData) => {
 */
 export const getRecordingRetention = async () => {
   try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
+    }
     const url = `${API_BASE_URL}/api/settings/business/settings/recording-retention`;
 
     const response = await fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true',
       },
     });
@@ -350,7 +365,10 @@ export const getRecordingRetention = async () => {
 // GET: Consent Policy
 export const getConsentPolicy = async () => {
   try {
-
+   const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
+    }
     const url = `${API_BASE_URL}/api/settings/business/consent-policy`;
     // console.log('[getConsentPolicy] Request URL:', url);
 
@@ -358,6 +376,7 @@ export const getConsentPolicy = async () => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true',
       },
     });
@@ -481,13 +500,13 @@ export const cloneVoice = async (audioFile, voiceName) => {
 */
 export const getClonedVoice = async () => {
   try {
-const userId = localStorage.getItem('user_id'); 
-    if (!userId) {
-      throw new Error('User ID not found. Please log in again.');
+const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication token not found. Please log in again.');
     }
 
     // console.log('Fetching voice info for user:', userId);
-    const url = `${API_BASE_URL}/api/elevenlabs/voices/${userId}`;
+    const url = `${API_BASE_URL}/api/elevenlabs/voices`;
     // console.log('GET Request URL:', url);
 
     const response = await fetch(url, {
@@ -495,6 +514,7 @@ const userId = localStorage.getItem('user_id');
       headers: {
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
+        'Authorization': `Bearer ${token}`,
       },
     });
 

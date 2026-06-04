@@ -175,7 +175,7 @@ export default function SettingsCompliancePage() {
     setIsLoadingScheduling(true);
     try {
       const response = await getCallScheduling();
-          const userId = localStorage.getItem('user_id'); // For debugging purpose to see in
+          
   
       
       if (response && response.regions && Array.isArray(response.regions)) {
