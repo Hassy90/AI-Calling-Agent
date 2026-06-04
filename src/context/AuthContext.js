@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
-// 24 hours expiry
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const EXPIRY_TIME = 24 * 60 * 60 * 1000;
 
 export function AuthProvider({ children }) {
@@ -13,68 +13,81 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   // =========================
-  // LOGIN FUNCTION
+  // LOGIN
   // =========================
   const login = (data) => {
-
-    // console.log("AUTH CONTEXT LOGIN DATA:", data);
-
     const now = Date.now();
 
     setToken(data.token);
-    setRole(data.role);
 
-    // save to localStorage
     localStorage.setItem("token", data.token);
-    localStorage.setItem("role", data.role);
-  
-
-    // expiry time store
     localStorage.setItem("login_time", now);
   };
 
   // =========================
-  // LOGOUT FUNCTION
+  // LOGOUT
   // =========================
   const logout = () => {
     setToken(null);
     setRole(null);
-    
 
     localStorage.removeItem("token");
-    localStorage.removeItem("role");
     localStorage.removeItem("login_time");
   };
 
   // =========================
-  // AUTO RESTORE + EXPIRY CHECK
+  // FETCH ROLE FROM API
+  // =========================
+  const fetchRole = async (token) => {
+    const res = await fetch(
+      `${BASE_URL}/api/auth/role?token=${encodeURIComponent(token)}`
+    );
+
+    if (!res.ok) throw new Error("Role API failed");
+
+    return await res.json();
+  };
+
+  // =========================
+  // RESTORE SESSION
   // =========================
   useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    const savedRole = localStorage.getItem("role");
-    const loginTime = localStorage.getItem("login_time");
+    const restoreSession = async () => {
+      try {
+        const savedToken = localStorage.getItem("token");
+        const loginTime = localStorage.getItem("login_time");
 
-    const now = Date.now();
+        const now = Date.now();
 
-    if (savedToken && loginTime) {
-      const isExpired = now - Number(loginTime) > EXPIRY_TIME;
+        if (!savedToken || !loginTime) {
+          setLoading(false);
+          return;
+        }
 
-     if (isExpired) {
-     localStorage.removeItem("token");
-     localStorage.removeItem("role");
-     localStorage.removeItem("login_time");
+        const isExpired = now - Number(loginTime) > EXPIRY_TIME;
 
-  setToken(null);
-  setRole(null);
+        if (isExpired) {
+          logout();
+          setLoading(false);
+          return;
+        }
 
-      } else {
-        // restore session
         setToken(savedToken);
-        setRole(savedRole);
-      }
-    }
 
-    setLoading(false);
+        // 👉 ROLE always from API
+        const data = await fetchRole(savedToken);
+       
+
+        setRole(data.role);
+      } catch (err) {
+        console.error("AUTH RESTORE ERROR:", err);
+        logout();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    restoreSession();
   }, []);
 
   return (
@@ -92,5 +105,4 @@ export function AuthProvider({ children }) {
   );
 }
 
-// custom hook
 export const useAuth = () => useContext(AuthContext);

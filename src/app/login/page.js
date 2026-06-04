@@ -39,7 +39,6 @@ export default function LoginUI() {
   setLoading(true);
 
   const result = await loginUser({ username: email, password });
-   console.log("LOGIN API RESULT:", result);
   if (result.success) {
 
     // remember email only (OK)
@@ -52,7 +51,7 @@ export default function LoginUI() {
     }
 
     const decodedToken = jwtDecode(result.token);
-    console.log("DECODED TOKEN:", decodedToken);
+    
 
      const role = (decodedToken.role || "").toLowerCase();
      

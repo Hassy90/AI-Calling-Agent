@@ -18,6 +18,8 @@ export default function SuperAdminRootLayout({ children }) {
       return;
     }
 
+      
+
     // Not super admin
     if (!role || role.toLowerCase() !== "admin") {
       router.replace("/login");

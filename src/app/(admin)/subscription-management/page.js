@@ -9,6 +9,9 @@ import RecentTransactionsSection from '@/app/components/admin/subscription-manag
 
 // API calls go through Next.js routes to bypass CORS issues
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+
 export default function MeetingRatePage() {
   const [minutes, setMinutes] = useState(null);
   const [rate, setRate] = useState(null);
@@ -74,7 +77,7 @@ export default function MeetingRatePage() {
 
       // Fetch minutes balance
       try {
-        const res = await fetch(`/api/balance`, {
+        const res = await fetch(`${BASE_URL}/api/balance`, {
           method: 'GET',
           headers: { accept: 'application/json',
               Authorization: `Bearer ${token}`

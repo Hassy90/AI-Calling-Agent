@@ -1,8 +1,8 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function GET() {
+export async function GET(request) {
   try {
-    const token = localStorage.getItem('access_token');
+     const authHeader = request.headers.get('authorization');
 
     const res = await fetch(
       `${BASE_URL}/api/contact/meeting/rate`,
@@ -10,7 +10,7 @@ export async function GET() {
         method: 'GET',
         headers: {
           accept: 'application/json',
-          Authorization: `Bearer ${token}`,
+           ...(authHeader ? { Authorization: authHeader } : {}),
         },
       }
     );
