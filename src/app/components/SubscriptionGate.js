@@ -18,11 +18,11 @@ export default function SubscriptionGate({ children }) {
     setIsLoading(false);
 
     // If not subscribed and not on subscription page, redirect
-    if (!subscribed && !pathname.includes('/subscriptions')) {
+    if (!subscribed && !pathname.includes('/subscription-management')) {
       // Allow access to subscription page only
-      const isSubscriptionPage = pathname === '/subscriptions';
+      const isSubscriptionPage = pathname === '/subscription-management';
       if (!isSubscriptionPage) {
-        router.push('/subscriptions');
+        router.push('/subscription-management');
       }
     }
   }, [pathname, router]);
@@ -36,7 +36,7 @@ export default function SubscriptionGate({ children }) {
   }
 
   // If on subscription page, always render
-  if (pathname.includes('/subscriptions')) {
+  if (pathname.includes('/subscription-management')) {
     return <>{children}</>;
   }
 
@@ -85,7 +85,7 @@ export default function SubscriptionGate({ children }) {
           </div>
 
           <button
-            onClick={() => router.push('/subscriptions')}
+            onClick={() => router.push('/subscription-management')}
             className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-cyan-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl"
           >
             View Subscription Plans

@@ -47,7 +47,7 @@ export default function SubscriptionPlans() {
         router.push('/overview');
       } else {
         // Fallback
-        router.push('/subscriptions');
+        router.push('/subscription-management');
       }
     } else {
       // User not logged in - redirect to signup

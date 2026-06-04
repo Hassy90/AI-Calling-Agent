@@ -20,6 +20,9 @@ import DurationDistributionChart from '@/app/components/admin/overview/DurationD
 import RecentActivity from '@/app/components/admin/overview/RecentActivity';
 import QuickActions from '@/app/components/admin/overview/QuickActions';
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+
 export default function OverviewPage() {
   // State for metrics and data
   const [metrics, setMetrics] = useState({
@@ -237,7 +240,7 @@ export default function OverviewPage() {
         return;
       }
 
-        const res = await fetch(`/api/balance`, {
+        const res = await fetch(`${BASE_URL}/api/balance`, {
           method: 'GET',
           headers: {
             accept: 'application/json',

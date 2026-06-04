@@ -55,14 +55,10 @@ export default function LeadsPage() {
   const fetchLeads = async (page = 1) => {
     setLoading(true);
     try {
-      // Get user_id from localStorage
-      const userId = typeof window !== 'undefined' ? localStorage.getItem('user_id') : null;
-      if (!userId) {
-        throw new Error('User ID not found. Please login again.');
-      }
+      
 
       // console.log('Fetching leads for userId:', userId, 'page:', page);
-      const response = await getLeads(userId, page, LEADS_PER_PAGE);
+      const response = await getLeads(page, LEADS_PER_PAGE);
       // console.log('Fetched leads response:', response);
 
       if (response.status === 'success') {
