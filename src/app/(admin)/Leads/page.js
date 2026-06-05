@@ -39,12 +39,12 @@ export default function LeadsPage() {
 
   const fetchProducts = async () => {
     try {
-      const userId = typeof window !== 'undefined' ? localStorage.getItem('user_id') : null;
-      if (!userId) {
-        throw new Error('User ID not found. Please login again.');
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication token not found. Please login again.');
       }
 
-      const response = await getProducts(userId);
+      const response = await getProducts(token);
       setProducts(response.products || []);
     } catch (error) {
       console.error("Error fetching products:", error);
