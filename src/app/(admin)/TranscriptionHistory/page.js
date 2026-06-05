@@ -21,12 +21,12 @@ export default function TranscriptionHistory() {
 
   useEffect(() => {
     // Get business_id from localStorage
-    const userId = localStorage.getItem('user_id');
-    if (userId) {
-      setBusinessId(userId);
-      fetchChatHistories(userId);
+    const token = localStorage.getItem('token');
+    if (token) {
+      setBusinessId(token);
+      fetchChatHistories(token);
     } else {
-      setError('User ID not found in localStorage');
+      setError('Authentication token not found in localStorage');
       setLoading(false);
     }
 

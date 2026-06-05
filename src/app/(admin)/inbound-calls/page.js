@@ -24,12 +24,12 @@ export default function InboundCallsPage() {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const userId = typeof window !== 'undefined' ? localStorage.getItem('user_id') : null;
-      if (!userId) {
-        throw new Error('User ID not found. Please login again.');
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication token not found. Please login again.');
       }
       
-      const response = await getProducts(userId);
+      const response = await getProducts(token);
       const productsArray = response.products || [];
       setProducts(productsArray);
     } catch (error) {
