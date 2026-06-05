@@ -107,12 +107,12 @@ function PromptsManagementPageInner() {
     setLoading(true);
     try {
       // Get user_id from localStorage
-      const userId = typeof window !== 'undefined' ? localStorage.getItem('user_id') : null;
-      if (!userId) {
-        throw new Error('User ID not found. Please login again.');
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error('Authentication token not found. Please log in again.');
       }
       
-      const response = await getProducts(userId);
+      const response = await getProducts(token);
    
       
       // The API returns { businessId: "...", products: [...] }
@@ -136,9 +136,9 @@ function PromptsManagementPageInner() {
 
     try {
       // Get user_id from localStorage
-      const userId = typeof window !== 'undefined' ? localStorage.getItem('user_id') : null;
-      if (!userId) {
-        throw new Error('User ID not found. Please login again.');
+      const token =  localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication token not found. Please login again.');
       }
 
       const productData = {
