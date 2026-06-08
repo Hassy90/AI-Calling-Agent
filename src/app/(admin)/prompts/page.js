@@ -40,7 +40,6 @@ function PromptsManagementPageInner() {
 
   // Form state
   const [formData, setFormData] = useState({
-    user_id: "",
     name: "",
     description: "",
     category: "Marketing", // Static value - not editable by users
@@ -106,7 +105,7 @@ function PromptsManagementPageInner() {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      // Get user_id from localStorage
+      
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error('Authentication token not found. Please log in again.');
@@ -135,14 +134,13 @@ function PromptsManagementPageInner() {
     setLoading(true);
 
     try {
-      // Get user_id from localStorage
+      
       const token =  localStorage.getItem('token');
       if (!token) {
         throw new Error('Authentication token not found. Please login again.');
       }
 
       const productData = {
-        user_id: userId, // Using user_id as businessId
         name: formData.name,
         description: formData.description,
         category: "Marketing", // Static value - users cannot change this
@@ -177,7 +175,6 @@ function PromptsManagementPageInner() {
   const handleEdit = (product) => {
     setEditingProduct(product);
     setFormData({
-      user_id: product.businessId,
       name: product.name,
       description: product.description,
       category: "Marketing", // Static value - always set to Marketing regardless of stored value
@@ -226,7 +223,6 @@ function PromptsManagementPageInner() {
 
   const resetForm = () => {
     setFormData({
-      user_id: "",
       name: "",
       description: "",
       category: "Marketing", // Static value - not editable by users
