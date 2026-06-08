@@ -30,6 +30,7 @@ export async function generateProductPrompt(productData) {
  */
 export async function createProduct(productData) {
   try {
+   
     const response = await apiFetch('/products', {
       method: 'POST',
       body: JSON.stringify(productData),
@@ -109,7 +110,7 @@ export async function getProductById(productId) {
  */
 export async function updateProduct(productId, productData) {
   try {
-    console.log('Updating product with data:', productData);
+    
     
     const response = await apiFetch(`/products/${productId}`, {
       method: 'PUT',
