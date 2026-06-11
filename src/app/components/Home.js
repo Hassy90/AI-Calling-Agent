@@ -51,12 +51,14 @@ export default function Home() {
             <SavingsSection/>
           </section>
 
-          <section id="calculator">
+          {/* <section id="calculator">
             <CalculatorSection/>
-          </section>
-          <section id="quote">
+          </section> */}
+
+          {/* <section id="quote">
             <QuoteSection/>
-          </section>
+          </section> */}
+
           <section id="service">
             <Services/>
           </section>
