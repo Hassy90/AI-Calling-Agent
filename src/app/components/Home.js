@@ -11,6 +11,9 @@ import PricingSection from './LandingPage/subscription';
 import PricingDetailsSection from './LandingPage/PricingSection';
 import CalculatorSection from './LandingPage/CalculatorSection';
 import QuoteSection from './LandingPage/QuoteSection';
+import AICallAgentSection from './LandingPage/AICallAgentSection';
+import PriceSection from './LandingPage/PriceSection';
+import SavingsSection from './LandingPage/SavingsSection';
 
 
 export default function Home() {
@@ -35,6 +38,19 @@ export default function Home() {
           {/* <section id="pricing">
             <PricingDetailsSection/>
           </section> */}
+
+          <section id="ai-call-agent">
+            <AICallAgentSection/>
+          </section>
+
+            <section id="price">
+            <PriceSection/>
+          </section>
+
+          <section id="savings">
+            <SavingsSection/>
+          </section>
+
           <section id="calculator">
             <CalculatorSection/>
           </section>
