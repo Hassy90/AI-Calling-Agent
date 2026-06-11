@@ -73,7 +73,7 @@ export default function AICallAgentSection() {
   ];
 
   return (
-    <section className="py-8 bg-white">
+    <section className="py-8 bg-white text-slate-900">
       <div className="max-w-7xl mx-auto px-4">
 
         {/* Badge */}
@@ -97,17 +97,17 @@ export default function AICallAgentSection() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
           {/* Comparison Table */}
-          <div className="lg:col-span-3 border rounded-3xl overflow-hidden shadow-sm">
+          <div className="lg:col-span-3 border border-gray-200 rounded-3xl overflow-hidden shadow-sm bg-white">
           <div className="overflow-x-auto">
           <div className="min-w-[750px]">
 
             <div className="grid grid-cols-[1.6fr_0.9fr_1fr] bg-gray-50">
 
-              <div className="p-4 md:p-6 font-bold text-sm md:text-lg border-r">
+              <div className="p-4 md:p-6 font-bold text-sm md:text-lg border-r border-gray-200 text-slate-900">
                 AI Call Agent vs Human Receptionist
               </div>
 
-              <div className="p-4 md:p-6 text-center font-semibold text-sm md:text-base border-r">
+              <div className="p-4 md:p-6 text-center font-semibold text-sm md:text-base border-r border-gray-200 text-slate-900">
                 Human Receptionist
               </div>
              
@@ -134,14 +134,14 @@ export default function AICallAgentSection() {
               return (
                 <div
                   key={index}
-                  className="grid grid-cols-[1.6fr_0.9fr_1fr] border-t"
+                  className="grid grid-cols-[1.6fr_0.9fr_1fr] border-t border-gray-100"
                 >
-                  <div className="p-3 flex items-center gap-2 md:gap-3 border-r text-sm md:text-base">
+                  <div className="p-3 flex items-center gap-2 md:gap-3 border-r border-gray-200 text-sm md:text-base text-slate-900">
                     <Icon size={16} className="shrink-0" />
                     <span>{item.title}</span>
                   </div>
 
-                  <div className="p-3 border-r text-gray-600 text-sm md:text-base">
+                  <div className="p-3 border-r border-gray-200 text-gray-600 text-sm md:text-base">
                     {item.human}
                   </div>
 
@@ -168,7 +168,7 @@ export default function AICallAgentSection() {
              />
             </div>
 
-            <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center lg:text-left">
+            <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center lg:text-left text-slate-900">
               More Than Just
               <br />
               Call Answering
@@ -192,7 +192,9 @@ export default function AICallAgentSection() {
                     className="text-blue-600"
                     size={20}
                   />
-                  <span>{item}</span>
+                  <span className="text-slate-900">
+                   {item}
+                </span>
                 </div>
               ))}
 
