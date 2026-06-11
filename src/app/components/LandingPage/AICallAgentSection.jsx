@@ -112,16 +112,18 @@ export default function AICallAgentSection() {
               </div>
              
              
-              <div className="flex items-center justify-center  p-2 font-semibold text-blue-700 bg-transparent">
+              <div className="flex items-center justify-center gap-2 p-2 font-semibold text-blue-700 bg-transparent">
               <Image
                 src="/images/im-2.png"
                 alt="AI Agent"
-                width={100}
-                height={100}
-                className="w-20 md:w-28 h-auto -mt-1"
+                width={28}
+                height={28}
+                className="w-7 h-7 object-contain flex-shrink-0"
               />
 
-              <span className="text-sm md:text-base">Neurovise AI Call Agent</span>
+              <span className="text-sm md:text-base whitespace-nowrap">
+                Neurovise AI Call Agent
+              </span>
             </div>
 
             </div>

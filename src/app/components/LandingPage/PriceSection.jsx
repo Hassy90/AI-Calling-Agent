@@ -1,5 +1,6 @@
 import React from "react";
 import { Phone, Check, Tag } from "lucide-react";
+import Link from "next/link";
 
 
 export default function PriceSection() {
@@ -177,7 +178,7 @@ export default function PriceSection() {
   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
 
     {/* Starter */}
-    <div className="border border-[#E5E7EB] rounded-2xl p-4 text-center bg-white">
+     <div className="border border-[#E5E7EB] rounded-2xl p-4 text-center bg-white flex flex-col">
       <h4 className="text-[18px] font-bold text-[#0EA5A4]">
         Starter
       </h4>
@@ -205,14 +206,16 @@ export default function PriceSection() {
       <div className="text-[13px] text-[#6B7280]">
         / month
       </div>
-
+      <div className="flex-1"></div>
       <button className="mt-4 w-full h-[42px] border border-[#0EA5A4] text-[#0EA5A4] rounded-lg text-[14px] font-semibold hover:bg-[#0EA5A4] hover:text-white transition">
+       <Link href="/signup">
         Get Started
+        </Link>
       </button>
     </div>
 
     {/* Growth */}
-    <div className="border border-[#E5E7EB] rounded-2xl p-4 text-center bg-white relative">
+    <div className="border border-[#E5E7EB] rounded-2xl p-4 text-center bg-white relative flex flex-col">
 
       <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#2563EB] text-white text-[10px] px-3 py-1 rounded-full font-semibold whitespace-nowrap">
         MOST POPULAR
@@ -245,14 +248,16 @@ export default function PriceSection() {
       <div className="text-[13px] text-[#6B7280]">
         / month
       </div>
-
+      <div className="flex-1"></div>
       <button className="mt-4 w-full h-[42px] border border-[#2563EB] text-[#2563EB] rounded-lg text-[14px] font-semibold hover:bg-[#2563EB] hover:text-white transition">
-        Get Started
+        <Link href="/signup">
+          Get Started
+        </Link>
       </button>
     </div>
 
     {/* Pro */}
-    <div className="border border-[#E5E7EB] rounded-2xl p-4 text-center bg-white">
+    <div className="border border-[#E5E7EB] rounded-2xl p-4 text-center bg-white flex flex-col">
       <h4 className="text-[18px] font-bold text-[#9333EA]">
         Pro
       </h4>
@@ -280,14 +285,16 @@ export default function PriceSection() {
       <div className="text-[13px] text-[#6B7280]">
         / month
       </div>
-
+          <div className="flex-1"></div>
       <button className="mt-4 w-full h-[42px] border border-[#9333EA] text-[#9333EA] rounded-lg text-[14px] font-semibold hover:bg-[#9333EA] hover:text-white transition">
-        Get Started
+        <Link href="/signup">
+          Get Started
+        </Link>
       </button>
     </div>
 
     {/* Enterprise */}
-    <div className="border border-[#E5E7EB] rounded-2xl p-4 text-center bg-white">
+    <div className="border border-[#E5E7EB] rounded-2xl p-4 text-center bg-white flex flex-col">
       <h4 className="text-[18px] font-bold text-[#111827]">
         Enterprise
       </h4>
@@ -316,8 +323,12 @@ export default function PriceSection() {
         pricing
       </div>
 
+      <div className="flex-1"></div>
+
       <button className="mt-4 w-full h-[42px] border border-[#9CA3AF] text-[#374151] rounded-lg text-[14px] font-semibold hover:bg-gray-100 transition">
+          <Link href="/signup">  
         Contact Sales
+        </Link>
       </button>
     </div>
 
