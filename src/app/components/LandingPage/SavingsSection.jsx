@@ -188,45 +188,6 @@ const handleContactSales = () => {
           </div>
         </div>
 
-        {/* FEATURES BOX */}
-        <div className="border border-gray-200 rounded-3xl mt-8 px-5 md:px-8 py-6 md:py-8">
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-8">
-
-            {features.map((item, index) => {
-              const Icon = item.icon;
-
-              return (
-                <div
-                  key={index}
-                  className="flex items-start gap-4"
-                >
-                  <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                    <Icon
-                      size={24}
-                      className="text-blue-600"
-                    />
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold text-[18px] md:text-[20px] text-gray-900">
-                      {item.title}
-                    </h4>
-
-                    <p className="text-gray-600 mt-2 leading-6">
-                      {item.desc}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-
-          </div>
-        </div>
-
-
-
-
         {/* BOTTOM CTA */}
 <div className="mt-8">
   <div className="bg-[linear-gradient(90deg,#071843_0%,#0A2A72_50%,#071843_100%)] border border-white/10 rounded-[20px] px-6 md:px-10 py-5 md:py-6 shadow-[0_10px_30px_rgba(0,0,0,0.25)]">
@@ -304,6 +265,49 @@ const handleContactSales = () => {
     </div>
   </div>
 </div>
+
+
+
+        {/* FEATURES BOX */}
+        <div className="border border-gray-200 rounded-3xl mt-8 px-5 md:px-8 py-6 md:py-8">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-8">
+
+            {features.map((item, index) => {
+              const Icon = item.icon;
+
+              return (
+                <div
+                  key={index}
+                  className="flex items-start gap-4"
+                >
+                  <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                    <Icon
+                      size={24}
+                      className="text-blue-600"
+                    />
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold text-[18px] md:text-[20px] text-gray-900">
+                      {item.title}
+                    </h4>
+
+                    <p className="text-gray-600 mt-2 leading-6">
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+
+          </div>
+        </div>
+
+
+
+
+
 
       </div>
     </section>
