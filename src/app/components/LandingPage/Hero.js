@@ -5,10 +5,8 @@ import { useEffect, useState } from 'react';
 
 const images = [
   '/images1/ai-agent1.jpg',
-  'https://surl.li/dqypni',
   '/images1/ai-agent2.jpg',
   '/images1/ai-agent3.jpg',
-  'https://surl.li/tkhbna',
 ];
 
 export default function Hero() {
@@ -29,7 +27,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-screen overflow-hidden">
+    <section className="relative min-h-screen overflow-hidden bg-black">
       <AnimatePresence>
         <motion.div
           key={current}
@@ -40,7 +38,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 1 }}
+          transition={{ duration: 0.2 }}
         />
       </AnimatePresence>
 
