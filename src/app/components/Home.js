@@ -55,9 +55,9 @@ export default function Home() {
             <CalculatorSection/>
           </section> */}
 
-          {/* <section id="quote">
+          <section id="quote">
             <QuoteSection/>
-          </section> */}
+          </section>
 
           <section id="service">
             <Services/>

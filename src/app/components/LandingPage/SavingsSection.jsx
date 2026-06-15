@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import {
   Phone,
   DollarSign,
@@ -8,8 +10,36 @@ import {
   Bot,
   User,
 } from "lucide-react";
+import { u } from "framer-motion/client";
 
 export default function SavingsSection() {
+
+  const [showCalculator, setShowCalculator] = useState(false);
+const [humanSupportCount, setHumanSupportCount] = useState("");
+
+const supportCount = Number(humanSupportCount) || 1;
+
+const humanCost = 3000 * supportCount;
+
+const aiMultiplier = Math.ceil(supportCount / 5);
+
+const aiCost = 960 * aiMultiplier;
+
+const savings = humanCost - aiCost;
+
+
+
+const handleContactSales = () => {
+  const contactSection = document.getElementById("contactus");
+
+  if (contactSection) {
+    contactSection.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+};
+
   const features = [
     {
       icon: Phone,
@@ -80,7 +110,7 @@ export default function SavingsSection() {
               </div>
 
               <h3 className="text-[40px] md:text-5xl font-bold text-black">
-                $3,000
+                ${humanCost.toLocaleString()}
               </h3>
 
               <p className="text-gray-600 mt-2 text-lg">
@@ -112,7 +142,7 @@ export default function SavingsSection() {
               </div>
 
               <h3 className="text-[40px] md:text-5xl font-bold text-black">
-                $960
+                  ${aiCost.toLocaleString()}
               </h3>
 
              <p className="text-gray-600 mt-2 text-base md:text-lg">
@@ -133,7 +163,7 @@ export default function SavingsSection() {
               </p>
 
               <h3 className="text-[30px] md:text-[34px] leading-none font-bold text-green-600 text-center mt-4">
-                $2,040
+                ${savings.toLocaleString()}
               </h3>
 
               <p className="text-green-700 font-semibold text-lg md:text-xl text-center mt-2">
@@ -232,15 +262,44 @@ export default function SavingsSection() {
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-        <button className="bg-[#1565FF] hover:bg-[#0D57E7] text-white font-semibold px-8 py-3 rounded-xl whitespace-nowrap">
-          Book a Demo
-        </button>
+     {!showCalculator ? (
+  <>
+    <button
+      onClick={handleContactSales}
+      className="lg:ml-auto bg-[#1565FF] hover:bg-[#0D57E7] text-white font-semibold px-8 py-3 rounded-xl whitespace-nowrap"
+    >
+      Book a Demo
+    </button>
 
-        <button className="border border-white/25 text-white hover:bg-white/10 px-8 py-3 rounded-xl font-semibold whitespace-nowrap">
-          Calculate My Savings
-        </button>
-      </div>
+    <button
+      onClick={() => setShowCalculator(true)}
+      className="border border-white/25 text-white hover:bg-white/10 px-8 py-3 rounded-xl font-semibold whitespace-nowrap"
+    >
+      Calculate My Savings
+    </button>
+  </>
+) : (
+  <div className="flex items-center gap-3 w-full">
+    <input
+      type="number"
+      min="1"
+      value={humanSupportCount}
+      onChange={(e) => setHumanSupportCount(e.target.value)}
+      placeholder="Enter your selected number of human support"
+      className="flex-1 h-[52px] rounded-xl px-4 text-black bg-white outline-none"
+    />
+
+    <button
+      onClick={() => {
+        setShowCalculator(false);
+        setHumanSupportCount("");
+      }}
+      className="h-[52px] w-[52px] rounded-xl border border-white/25 text-white hover:bg-white/10 text-xl font-bold"
+    >
+      ✕
+    </button>
+  </div>
+)}
 
     </div>
   </div>

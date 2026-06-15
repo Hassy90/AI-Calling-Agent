@@ -121,6 +121,8 @@ export default function QuoteSection() {
     }
   };
 
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -136,7 +138,7 @@ export default function QuoteSection() {
 
     // Validate that we have valid minutes
     const noOfMins = calculatorData?.monthlyMinutes || 0;
-    const ratePerMinute = calculatorData?.totalRatePerMinute || 0;
+    const ratePerMinute = calculatorData?.ratePerMinute || 0;
     if (!noOfMins || noOfMins === 0) {
       setError('Please specify the number of monthly minutes needed.');
       setIsLoading(false);
@@ -167,6 +169,14 @@ export default function QuoteSection() {
       setIsLoading(false);
       return;
     }
+
+
+    console.log("calculatorData", calculatorData);
+
+console.log({
+  no_of_mins: String(noOfMins),
+  rate_per_minute: String(ratePerMinute),
+});
 
     try {
       // Combine date and time into ISO datetime string

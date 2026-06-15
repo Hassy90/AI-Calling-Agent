@@ -1,9 +1,51 @@
+"use client";
 import React from "react";
+
 import { Phone, Check, Tag } from "lucide-react";
-import Link from "next/link";
 
 
 export default function PriceSection() {
+
+const handlePlanSelect = (minutes, price, planName) => {
+  const ratePerMinute = (price / minutes).toFixed(4);
+
+  const planData = {
+    planName,
+    monthlyMinutes: minutes,
+    ratePerMinute,
+    price,
+  };
+
+  sessionStorage.setItem(
+    "calculatorData",
+    JSON.stringify(planData)
+  );
+
+  window.dispatchEvent(
+    new Event("calculatorDataUpdated")
+  );
+
+  const quoteSection = document.getElementById("quote");
+  if (quoteSection) {
+    quoteSection.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+};
+
+const handleContactSales = () => {
+  const contactSection = document.getElementById("contactus");
+
+  if (contactSection) {
+    contactSection.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+};
+
+
   return (
     <section className="py-10 md:py-12 bg-white">
       <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-4">
@@ -207,10 +249,15 @@ export default function PriceSection() {
         / month
       </div>
       <div className="flex-1"></div>
-      <button className="mt-4 w-full h-[42px] border border-[#0EA5A4] text-[#0EA5A4] rounded-lg text-[14px] font-semibold hover:bg-[#0EA5A4] hover:text-white transition">
-       <Link href="/signup">
+      <button onClick={()=> handlePlanSelect(
+        1000,
+         299,
+      "Starter"
+      )}
+      className="mt-4 w-full h-[42px] border border-[#0EA5A4] text-[#0EA5A4] rounded-lg text-[14px] font-semibold hover:bg-[#0EA5A4] hover:text-white transition">
+       
         Get Started
-        </Link>
+        
       </button>
     </div>
 
@@ -249,10 +296,15 @@ export default function PriceSection() {
         / month
       </div>
       <div className="flex-1"></div>
-      <button className="mt-4 w-full h-[42px] border border-[#2563EB] text-[#2563EB] rounded-lg text-[14px] font-semibold hover:bg-[#2563EB] hover:text-white transition">
-        <Link href="/signup">
+      <button onClick={()=> handlePlanSelect(
+        3000,
+         799,
+      "Growth"
+      )}
+      className="mt-4 w-full h-[42px] border border-[#2563EB] text-[#2563EB] rounded-lg text-[14px] font-semibold hover:bg-[#2563EB] hover:text-white transition">
+        
           Get Started
-        </Link>
+        
       </button>
     </div>
 
@@ -286,10 +338,15 @@ export default function PriceSection() {
         / month
       </div>
           <div className="flex-1"></div>
-      <button className="mt-4 w-full h-[42px] border border-[#9333EA] text-[#9333EA] rounded-lg text-[14px] font-semibold hover:bg-[#9333EA] hover:text-white transition">
-        <Link href="/signup">
+      <button onClick={()=> handlePlanSelect(
+        6000,
+         1499,
+      "Pro"
+      )}
+      className="mt-4 w-full h-[42px] border border-[#9333EA] text-[#9333EA] rounded-lg text-[14px] font-semibold hover:bg-[#9333EA] hover:text-white transition">
+        
           Get Started
-        </Link>
+        
       </button>
     </div>
 
@@ -325,10 +382,12 @@ export default function PriceSection() {
 
       <div className="flex-1"></div>
 
-      <button className="mt-4 w-full h-[42px] border border-[#9CA3AF] text-[#374151] rounded-lg text-[14px] font-semibold hover:bg-gray-100 transition">
-          <Link href="/signup">  
+      <button 
+      onClick={handleContactSales}
+      className="mt-4 w-full h-[42px] border border-[#9CA3AF] text-[#374151] rounded-lg text-[14px] font-semibold hover:bg-gray-100 transition">
+         
         Contact Sales
-        </Link>
+      
       </button>
     </div>
 
