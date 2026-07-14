@@ -42,8 +42,7 @@ export default function Hero() {
         />
       </AnimatePresence>
 
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/50 z-10" />
+    
 
      
     </section>
